@@ -300,8 +300,8 @@ function handlePasteSpellDetails(event) {
   // Prevent default paste behavior
   event.preventDefault();
 
-  // Parse each line
-  const lines = pastedText.split(/\r?\n/);
+  // Parse each line (handle \r\n, \n, or \r line endings)
+  const lines = pastedText.split(/\r\n|\r|\n/);
 
   for (const line of lines) {
     const trimmedLine = line.trim();
