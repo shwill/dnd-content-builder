@@ -584,9 +584,10 @@ async function editMonster(id) {
     renderLanguages();
 
     // Additional details
-    document.getElementById('damageResistances').value = monster.damageResistances?.join(', ') || '';
-    document.getElementById('damageImmunities').value = monster.damageImmunities?.join(', ') || '';
-    document.getElementById('conditionImmunities').value = monster.conditionImmunities?.join(', ') || '';
+    document.getElementById('damageResistances').value = monster.damageResistances?.join('; ') || '';
+    document.getElementById('damageImmunities').value = monster.damageImmunities?.join('; ') || '';
+    document.getElementById('damageVulnerabilities').value = monster.damageVulnerabilities?.join('; ') || '';
+    document.getElementById('conditionImmunities').value = monster.conditionImmunities?.join('; ') || '';
 
     monsterList.style.display = 'none';
     monsterForm.style.display = 'block';
@@ -731,14 +732,16 @@ async function handleSubmit(e) {
       abilities: Object.keys(abilities).length > 0 ? abilities : null,
       skills: Object.keys(skills).length > 0 ? skills : null,
       damageResistances: document.getElementById('damageResistances').value
-        ? document.getElementById('damageResistances').value.split(',').map(s => s.trim())
+        ? document.getElementById('damageResistances').value.split(';').map(s => s.trim())
         : null,
       damageImmunities: document.getElementById('damageImmunities').value
-        ? document.getElementById('damageImmunities').value.split(',').map(s => s.trim())
+        ? document.getElementById('damageImmunities').value.split(';').map(s => s.trim())
         : null,
-      damageVulnerabilities: null,
+      damageVulnerabilities: document.getElementById('damageVulnerabilities').value
+        ? document.getElementById('damageVulnerabilities').value.split(';').map(s => s.trim())
+        : null,
       conditionImmunities: document.getElementById('conditionImmunities').value
-        ? document.getElementById('conditionImmunities').value.split(',').map(s => s.trim())
+        ? document.getElementById('conditionImmunities').value.split(';').map(s => s.trim())
         : null,
       senses: sensesList.length > 0 ? sensesList : null,
       languages: languagesList.length > 0 ? languagesList : null,
