@@ -3,6 +3,7 @@ const API_URL = 'http://localhost:3100/api';
 let currentMonsterId = null;
 let sensesList = [];
 let languagesList = [];
+let skillsList = [];
 
 // DOM Elements
 const monsterList = document.getElementById('monsterList');
@@ -35,6 +36,28 @@ const skillAbilities = {
   survival: 'wis'
 };
 
+// Skill display names
+const skillNames = {
+  acrobatics: 'Acrobatics',
+  animalHandling: 'Animal Handling',
+  arcana: 'Arcana',
+  athletics: 'Athletics',
+  deception: 'Deception',
+  history: 'History',
+  insight: 'Insight',
+  intimidation: 'Intimidation',
+  investigation: 'Investigation',
+  medicine: 'Medicine',
+  nature: 'Nature',
+  perception: 'Perception',
+  performance: 'Performance',
+  persuasion: 'Persuasion',
+  religion: 'Religion',
+  sleightOfHand: 'Sleight of Hand',
+  stealth: 'Stealth',
+  survival: 'Survival'
+};
+
 // Initialize
 loadMonsters();
 
@@ -65,12 +88,8 @@ document.getElementById('profBonus').addEventListener('input', updateAbilitiesAn
   });
 });
 
-// Skill proficiency change listeners
-Object.keys(skillAbilities).forEach(skill => {
-  document.getElementById(`${skill}Prof`).addEventListener('change', updateAbilitiesAndSkills);
-});
-
-// Senses and languages
+// Skills, senses and languages
+document.getElementById('addSkillBtn').addEventListener('click', addSkill);
 document.getElementById('addSenseBtn').addEventListener('click', addSense);
 document.getElementById('addLanguageBtn').addEventListener('click', addLanguage);
 
@@ -115,18 +134,72 @@ function updateAbilitiesAndSkills() {
     document.getElementById(`${ability}SaveDisplay`).textContent = formatBonus(saveBonus);
   });
 
-  // Update skill displays
-  Object.keys(skillAbilities).forEach(skill => {
-    const ability = skillAbilities[skill];
+  // Re-render skills with updated bonuses
+  renderSkills();
+}
+
+// Skills management
+function addSkill() {
+  const skillKey = document.getElementById('skillSelect').value;
+  const proficiency = document.getElementById('skillProfSelect').value;
+
+  if (!skillKey) {
+    alert('Please select a skill');
+    return;
+  }
+
+  // Check if skill already added
+  if (skillsList.some(s => s.key === skillKey)) {
+    alert('This skill has already been added');
+    return;
+  }
+
+  skillsList.push({ key: skillKey, proficiency });
+  renderSkills();
+
+  // Clear selection
+  document.getElementById('skillSelect').value = '';
+}
+
+function removeSkill(index) {
+  skillsList.splice(index, 1);
+  renderSkills();
+}
+
+function renderSkills() {
+  const container = document.getElementById('skillsList');
+  if (skillsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No skills added</p>';
+    return;
+  }
+
+  const profBonus = parseInt(document.getElementById('profBonus').value) || 0;
+  const abilities = {
+    str: parseInt(document.getElementById('str').value) || 10,
+    dex: parseInt(document.getElementById('dex').value) || 10,
+    con: parseInt(document.getElementById('con').value) || 10,
+    int: parseInt(document.getElementById('int').value) || 10,
+    wis: parseInt(document.getElementById('wis').value) || 10,
+    cha: parseInt(document.getElementById('cha').value) || 10
+  };
+
+  container.innerHTML = skillsList.map((skill, index) => {
+    const ability = skillAbilities[skill.key];
     const modifier = calcModifier(abilities[ability]);
-    const proficiency = document.getElementById(`${skill}Prof`).value;
     let bonus = modifier;
 
-    if (proficiency === 'proficient') bonus += profBonus;
-    if (proficiency === 'expert') bonus += profBonus * 2;
+    if (skill.proficiency === 'proficient') bonus += profBonus;
+    if (skill.proficiency === 'expert') bonus += profBonus * 2;
 
-    document.getElementById(`${skill}Display`).textContent = formatBonus(bonus);
-  });
+    const profLabel = skill.proficiency === 'expert' ? 'Expert' : 'Proficient';
+
+    return `
+      <div class="tag">
+        <span><strong>${skillNames[skill.key]}</strong>: ${formatBonus(bonus)} (${profLabel})</span>
+        <button type="button" onclick="removeSkill(${index})">×</button>
+      </div>
+    `;
+  }).join('');
 }
 
 // Senses management
@@ -264,12 +337,14 @@ function showNewMonsterForm() {
   form.reset();
   sensesList = [];
   languagesList = [];
+  skillsList = [];
 
   // Reset save proficiencies
   ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
     document.getElementById(`${ability}Save`).setAttribute('data-prof', 'none');
   });
 
+  renderSkills();
   renderSenses();
   renderLanguages();
   updateAbilitiesAndSkills();
@@ -284,6 +359,7 @@ function hideForm() {
   form.reset();
   sensesList = [];
   languagesList = [];
+  skillsList = [];
   currentMonsterId = null;
 }
 
@@ -355,19 +431,17 @@ async function editMonster(id) {
       }
     });
 
-    // Reset and load skills
-    Object.keys(skillAbilities).forEach(skill => {
-      document.getElementById(`${skill}Prof`).value = 'none';
-    });
-
+    // Load skills
+    skillsList = [];
     if (monster.skills) {
-      Object.keys(monster.skills).forEach(skillName => {
-        const skill = monster.skills[skillName];
+      Object.keys(monster.skills).forEach(skillKey => {
+        const skill = monster.skills[skillKey];
         if (skill.proficiency) {
-          document.getElementById(`${skillName}Prof`).value = skill.proficiency;
+          skillsList.push({ key: skillKey, proficiency: skill.proficiency });
         }
       });
     }
+    renderSkills();
 
     // Update displays
     updateAbilitiesAndSkills();
@@ -478,24 +552,21 @@ async function handleSubmit(e) {
     }
   });
 
-  // Build skills
+  // Build skills - only include explicitly added skills
   const skills = {};
-  Object.keys(skillAbilities).forEach(skill => {
-    const proficiency = document.getElementById(`${skill}Prof`).value;
-    if (proficiency !== 'none') {
-      const ability = skillAbilities[skill];
-      const abilityScore = parseInt(document.getElementById(ability).value) || 10;
-      const modifier = calcModifier(abilityScore);
-      let bonus = modifier;
+  skillsList.forEach(skill => {
+    const ability = skillAbilities[skill.key];
+    const abilityScore = parseInt(document.getElementById(ability).value) || 10;
+    const modifier = calcModifier(abilityScore);
+    let bonus = modifier;
 
-      if (proficiency === 'proficient') bonus += profBonus;
-      if (proficiency === 'expert') bonus += profBonus * 2;
+    if (skill.proficiency === 'proficient') bonus += profBonus;
+    if (skill.proficiency === 'expert') bonus += profBonus * 2;
 
-      skills[skill] = {
-        bonus,
-        proficiency
-      };
-    }
+    skills[skill.key] = {
+      bonus,
+      proficiency: skill.proficiency
+    };
   });
 
   const monsterData = {
@@ -578,5 +649,6 @@ async function handleSubmit(e) {
 window.editMonster = editMonster;
 window.deleteMonster = deleteMonster;
 window.duplicateMonster = duplicateMonster;
+window.removeSkill = removeSkill;
 window.removeSense = removeSense;
 window.removeLanguage = removeLanguage;
