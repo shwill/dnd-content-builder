@@ -143,6 +143,12 @@ function handlePasteSpellHeader(event) {
   // Prevent default paste behavior
   event.preventDefault();
 
+  // Normalize line breaks and special characters from PDFs
+  // Replace various dash/hyphen characters with standard hyphen
+  pastedText = pastedText.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, '-');
+  // Collapse multiple spaces and newlines into single spaces
+  pastedText = pastedText.replace(/\s+/g, ' ').trim();
+
   // Extract classes from parentheses
   let classes = '';
   const classesMatch = pastedText.match(/\(([^)]+)\)/);
