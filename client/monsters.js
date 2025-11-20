@@ -166,6 +166,11 @@ document.getElementById('mythicActionContent').addEventListener('paste', functio
   handlePasteWithTitleSplit(e, 'mythicActionTitle', 'mythicActionContent');
 });
 
+// Paste listener for legendary actions intro (no title split, just cleanup)
+document.getElementById('legendaryActionsIntro').addEventListener('paste', function(e) {
+  handlePasteCleanup(e, 'legendaryActionsIntro');
+});
+
 // Helper functions
 function calcModifier(score) {
   if (!score) return 0;
@@ -190,13 +195,10 @@ function updateMarkdownPreview(textareaId, previewId) {
   preview.innerHTML = marked.parse(text);
 }
 
-function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
-  // Get pasted text
-  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
-
+function cleanupLineBreaks(text) {
   // Clean up line breaks from PDFs: preserve paragraph breaks (blank lines) but remove single line breaks
   // Split by blank lines (one or more empty lines with possible whitespace)
-  const paragraphs = pastedText.split(/(?:\r?\n\s*){2,}/);
+  const paragraphs = text.split(/(?:\r?\n\s*){2,}/);
 
   // For each paragraph, replace single newlines with spaces and normalize whitespace
   const cleanedParagraphs = paragraphs.map(para => {
@@ -204,7 +206,30 @@ function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
   }).filter(para => para.length > 0); // Remove empty paragraphs
 
   // Join paragraphs back with double newlines
-  pastedText = cleanedParagraphs.join('\n\n');
+  return cleanedParagraphs.join('\n\n');
+}
+
+function handlePasteCleanup(event, fieldId) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Clean up line breaks
+  pastedText = cleanupLineBreaks(pastedText);
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Set field content
+  const field = document.getElementById(fieldId);
+  field.value = pastedText;
+}
+
+function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Clean up line breaks
+  pastedText = cleanupLineBreaks(pastedText);
 
   // Auto-format common D&D patterns with markdown italics
   // Attack Roll patterns
