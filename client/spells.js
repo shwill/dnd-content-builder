@@ -429,6 +429,8 @@ function handleQuickPaste(event) {
       const materialMatch = componentsText.match(/\(([^)]+)\)/);
       if (materialMatch) {
         document.getElementById('material').value = materialMatch[1].trim();
+      } else {
+        document.getElementById('material').value = '';
       }
     }
 
@@ -568,6 +570,8 @@ function handlePasteSpellDetails(event) {
       const materialMatch = componentsText.match(/\(([^)]+)\)/);
       if (materialMatch) {
         document.getElementById('material').value = materialMatch[1].trim();
+      } else {
+        document.getElementById('material').value = '';
       }
     }
 
