@@ -126,6 +126,26 @@ document.getElementById('hpFormula').addEventListener('input', calculateAverageH
 // CR to XP calculation
 document.getElementById('cr').addEventListener('input', calculateXPFromCR);
 
+// Markdown preview listeners
+document.getElementById('traitContent').addEventListener('input', function() {
+  updateMarkdownPreview('traitContent', 'traitPreview');
+});
+document.getElementById('actionContent').addEventListener('input', function() {
+  updateMarkdownPreview('actionContent', 'actionPreview');
+});
+document.getElementById('bonusActionContent').addEventListener('input', function() {
+  updateMarkdownPreview('bonusActionContent', 'bonusActionPreview');
+});
+document.getElementById('reactionContent').addEventListener('input', function() {
+  updateMarkdownPreview('reactionContent', 'reactionPreview');
+});
+document.getElementById('legendaryActionContent').addEventListener('input', function() {
+  updateMarkdownPreview('legendaryActionContent', 'legendaryActionPreview');
+});
+document.getElementById('mythicActionContent').addEventListener('input', function() {
+  updateMarkdownPreview('mythicActionContent', 'mythicActionPreview');
+});
+
 // Helper functions
 function calcModifier(score) {
   if (!score) return 0;
@@ -134,6 +154,20 @@ function calcModifier(score) {
 
 function formatBonus(bonus) {
   return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+}
+
+function updateMarkdownPreview(textareaId, previewId) {
+  const textarea = document.getElementById(textareaId);
+  const preview = document.getElementById(previewId);
+  const text = textarea.value.trim();
+
+  if (!text) {
+    preview.innerHTML = '';
+    return;
+  }
+
+  // Use marked.js to convert markdown to HTML
+  preview.innerHTML = marked.parse(text);
 }
 
 function calculateAverageHP() {
@@ -444,6 +478,7 @@ function addTrait() {
 
   document.getElementById('traitTitle').value = '';
   document.getElementById('traitContent').value = '';
+  document.getElementById('traitPreview').innerHTML = '';
 }
 
 function removeTrait(index) {
@@ -484,6 +519,7 @@ function addAction() {
 
   document.getElementById('actionTitle').value = '';
   document.getElementById('actionContent').value = '';
+  document.getElementById('actionPreview').innerHTML = '';
 }
 
 function removeAction(index) {
@@ -524,6 +560,7 @@ function addBonusAction() {
 
   document.getElementById('bonusActionTitle').value = '';
   document.getElementById('bonusActionContent').value = '';
+  document.getElementById('bonusActionPreview').innerHTML = '';
 }
 
 function removeBonusAction(index) {
@@ -564,6 +601,7 @@ function addReaction() {
 
   document.getElementById('reactionTitle').value = '';
   document.getElementById('reactionContent').value = '';
+  document.getElementById('reactionPreview').innerHTML = '';
 }
 
 function removeReaction(index) {
@@ -604,6 +642,7 @@ function addLegendaryAction() {
 
   document.getElementById('legendaryActionTitle').value = '';
   document.getElementById('legendaryActionContent').value = '';
+  document.getElementById('legendaryActionPreview').innerHTML = '';
 }
 
 function removeLegendaryAction(index) {
@@ -644,6 +683,7 @@ function addMythicAction() {
 
   document.getElementById('mythicActionTitle').value = '';
   document.getElementById('mythicActionContent').value = '';
+  document.getElementById('mythicActionPreview').innerHTML = '';
 }
 
 function removeMythicAction(index) {

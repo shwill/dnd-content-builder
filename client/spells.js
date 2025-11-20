@@ -20,6 +20,29 @@ cancelBtn.addEventListener('click', hideForm);
 cancelBtnBottom.addEventListener('click', hideForm);
 form.addEventListener('submit', handleSubmit);
 
+// Markdown preview listeners
+document.getElementById('description').addEventListener('input', function() {
+  updateMarkdownPreview('description', 'descriptionPreview');
+});
+document.getElementById('higherLevels').addEventListener('input', function() {
+  updateMarkdownPreview('higherLevels', 'higherLevelsPreview');
+});
+
+// Helper function for markdown preview
+function updateMarkdownPreview(textareaId, previewId) {
+  const textarea = document.getElementById(textareaId);
+  const preview = document.getElementById(previewId);
+  const text = textarea.value.trim();
+
+  if (!text) {
+    preview.innerHTML = '';
+    return;
+  }
+
+  // Use marked.js to convert markdown to HTML
+  preview.innerHTML = marked.parse(text);
+}
+
 // Load all spells
 async function loadSpells() {
   try {
@@ -59,6 +82,8 @@ function showNewSpellForm() {
   currentSpellId = null;
   formTitle.textContent = 'New Spell';
   form.reset();
+  document.getElementById('descriptionPreview').innerHTML = '';
+  document.getElementById('higherLevelsPreview').innerHTML = '';
   spellList.style.display = 'none';
   spellForm.style.display = 'block';
 }
@@ -68,6 +93,8 @@ function hideForm() {
   spellForm.style.display = 'none';
   spellList.style.display = 'block';
   form.reset();
+  document.getElementById('descriptionPreview').innerHTML = '';
+  document.getElementById('higherLevelsPreview').innerHTML = '';
   currentSpellId = null;
 }
 
@@ -109,6 +136,10 @@ async function editSpell(id) {
     document.getElementById('save').value = spell.save || '';
     document.getElementById('damageType').value = spell.damageType?.join(', ') || '';
     document.getElementById('tags').value = spell.meta?.tags?.join(', ') || '';
+
+    // Update markdown previews
+    updateMarkdownPreview('description', 'descriptionPreview');
+    updateMarkdownPreview('higherLevels', 'higherLevelsPreview');
 
     spellList.style.display = 'none';
     spellForm.style.display = 'block';

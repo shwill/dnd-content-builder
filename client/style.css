@@ -530,6 +530,82 @@ header p {
   cursor: pointer;
 }
 
+.markdown-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.markdown-input,
+.markdown-preview {
+  display: flex;
+  flex-direction: column;
+}
+
+.markdown-input label,
+.markdown-preview label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.markdown-input textarea {
+  flex: 1;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.preview-content {
+  flex: 1;
+  min-height: 120px;
+  padding: 10px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow-y: auto;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+.preview-content p {
+  margin-bottom: 10px;
+}
+
+.preview-content p:last-child {
+  margin-bottom: 0;
+}
+
+.preview-content strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.preview-content em {
+  font-style: italic;
+}
+
+.preview-content code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.preview-content ul,
+.preview-content ol {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.preview-content:empty::before {
+  content: "Preview will appear here...";
+  color: var(--text-light);
+  font-style: italic;
+}
+
 .form-actions {
   display: flex;
   gap: 15px;
@@ -573,6 +649,10 @@ header p {
   }
 
   .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-editor {
     grid-template-columns: 1fr;
   }
 

@@ -450,9 +450,15 @@
                 <label for="traitTitle">Title</label>
                 <input type="text" id="traitTitle" placeholder="e.g., Pack Tactics">
               </div>
-              <div class="form-group">
-                <label for="traitContent">Content (markdown)</label>
-                <textarea id="traitContent" rows="3" placeholder="Enter trait description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="traitContent">Content (markdown)</label>
+                  <textarea id="traitContent" rows="5" placeholder="Enter trait description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="traitPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addTraitBtn" class="btn btn-success">Add Trait</button>
             </div>
@@ -466,9 +472,15 @@
                 <label for="actionTitle">Title</label>
                 <input type="text" id="actionTitle" placeholder="e.g., Multiattack">
               </div>
-              <div class="form-group">
-                <label for="actionContent">Content (markdown)</label>
-                <textarea id="actionContent" rows="3" placeholder="Enter action description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="actionContent">Content (markdown)</label>
+                  <textarea id="actionContent" rows="5" placeholder="Enter action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="actionPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addActionBtn" class="btn btn-success">Add Action</button>
             </div>
@@ -482,9 +494,15 @@
                 <label for="bonusActionTitle">Title</label>
                 <input type="text" id="bonusActionTitle" placeholder="e.g., Cunning Action">
               </div>
-              <div class="form-group">
-                <label for="bonusActionContent">Content (markdown)</label>
-                <textarea id="bonusActionContent" rows="3" placeholder="Enter bonus action description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="bonusActionContent">Content (markdown)</label>
+                  <textarea id="bonusActionContent" rows="5" placeholder="Enter bonus action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="bonusActionPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addBonusActionBtn" class="btn btn-success">Add Bonus Action</button>
             </div>
@@ -498,9 +516,15 @@
                 <label for="reactionTitle">Title</label>
                 <input type="text" id="reactionTitle" placeholder="e.g., Parry">
               </div>
-              <div class="form-group">
-                <label for="reactionContent">Content (markdown)</label>
-                <textarea id="reactionContent" rows="3" placeholder="Enter reaction description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="reactionContent">Content (markdown)</label>
+                  <textarea id="reactionContent" rows="5" placeholder="Enter reaction description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="reactionPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addReactionBtn" class="btn btn-success">Add Reaction</button>
             </div>
@@ -514,9 +538,15 @@
                 <label for="legendaryActionTitle">Title</label>
                 <input type="text" id="legendaryActionTitle" placeholder="e.g., Detect">
               </div>
-              <div class="form-group">
-                <label for="legendaryActionContent">Content (markdown)</label>
-                <textarea id="legendaryActionContent" rows="3" placeholder="Enter legendary action description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="legendaryActionContent">Content (markdown)</label>
+                  <textarea id="legendaryActionContent" rows="5" placeholder="Enter legendary action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="legendaryActionPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addLegendaryActionBtn" class="btn btn-success">Add Legendary Action</button>
             </div>
@@ -530,9 +560,15 @@
                 <label for="mythicActionTitle">Title</label>
                 <input type="text" id="mythicActionTitle" placeholder="e.g., Divine Smite">
               </div>
-              <div class="form-group">
-                <label for="mythicActionContent">Content (markdown)</label>
-                <textarea id="mythicActionContent" rows="3" placeholder="Enter mythic action description..."></textarea>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="mythicActionContent">Content (markdown)</label>
+                  <textarea id="mythicActionContent" rows="5" placeholder="Enter mythic action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="mythicActionPreview" class="preview-content"></div>
+                </div>
               </div>
               <button type="button" id="addMythicActionBtn" class="btn btn-success">Add Mythic Action</button>
             </div>
@@ -548,6 +584,7 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script src="monsters.js"></script>
 </body>
 </html>
