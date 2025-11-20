@@ -411,7 +411,10 @@ function handleQuickPaste(event) {
     // Range
     const rangeMatch = line.match(/^Range:\s*(.+)$/i);
     if (rangeMatch) {
-      document.getElementById('range').value = rangeMatch[1].trim();
+      let rangeValue = rangeMatch[1].trim();
+      // Convert "feet" to "ft." for consistency
+      rangeValue = rangeValue.replace(/\bfeet\b/gi, 'ft.');
+      document.getElementById('range').value = rangeValue;
     }
 
     // Components
@@ -541,7 +544,10 @@ function handlePasteSpellDetails(event) {
     // Range
     const rangeMatch = trimmedLine.match(/^Range:\s*(.+)$/i);
     if (rangeMatch) {
-      document.getElementById('range').value = rangeMatch[1].trim();
+      let rangeValue = rangeMatch[1].trim();
+      // Convert "feet" to "ft." for consistency
+      rangeValue = rangeValue.replace(/\bfeet\b/gi, 'ft.');
+      document.getElementById('range').value = rangeValue;
     }
 
     // Components
