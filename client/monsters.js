@@ -956,19 +956,23 @@ async function loadMonsters() {
       return;
     }
 
-    monsterList.innerHTML = monsters.map(monster => `
-      <div class="content-item">
-        <div class="content-item-info">
-          <h3>${monster.monster.name}</h3>
-          <p>${monster.monster.size || 'Unknown'} ${monster.monster.type || 'Creature'} • CR ${monster.monster.challengeRating?.rating || '—'}</p>
+    monsterList.innerHTML = monsters.map(monster => {
+      const source = monster.monster.meta?.source ? `<p class="text-muted" style="font-size: 0.9em; margin-top: 4px;">Source: ${monster.monster.meta.source}</p>` : '';
+      return `
+        <div class="content-item">
+          <div class="content-item-info">
+            <h3>${monster.monster.name}</h3>
+            <p>${monster.monster.size || 'Unknown'} ${monster.monster.type || 'Creature'} • CR ${monster.monster.challengeRating?.rating || '—'}</p>
+            ${source}
+          </div>
+          <div class="content-item-actions">
+            <button class="btn btn-small btn-secondary" onclick="editMonster('${monster.id}')">Edit</button>
+            <button class="btn btn-small btn-success" onclick="duplicateMonster('${monster.id}')">Duplicate</button>
+            <button class="btn btn-small btn-danger" onclick="deleteMonster('${monster.id}')">Delete</button>
+          </div>
         </div>
-        <div class="content-item-actions">
-          <button class="btn btn-small btn-secondary" onclick="editMonster('${monster.id}')">Edit</button>
-          <button class="btn btn-small btn-success" onclick="duplicateMonster('${monster.id}')">Duplicate</button>
-          <button class="btn btn-small btn-danger" onclick="deleteMonster('${monster.id}')">Delete</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   } catch (error) {
     console.error('Error loading monsters:', error);
     monsterList.innerHTML = '<p class="text-danger">Error loading monsters. Make sure the server is running.</p>';

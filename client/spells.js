@@ -755,11 +755,13 @@ async function loadSpells() {
     spellList.innerHTML = spells.map(spell => {
       const level = spell.spell.level === 0 ? 'Cantrip' : `Level ${spell.spell.level}`;
       const school = spell.spell.school ? spell.spell.school.charAt(0).toUpperCase() + spell.spell.school.slice(1) : '';
+      const source = spell.spell.meta?.source ? `<p class="text-muted" style="font-size: 0.9em; margin-top: 4px;">Source: ${spell.spell.meta.source}</p>` : '';
       return `
         <div class="content-item">
           <div class="content-item-info">
             <h3>${spell.spell.name}</h3>
             <p>${level}${school ? ' • ' + school : ''}</p>
+            ${source}
           </div>
           <div class="content-item-actions">
             <button class="btn btn-small btn-secondary" onclick="editSpell('${spell.id}')">Edit</button>
