@@ -51,6 +51,11 @@ document.getElementById('material').addEventListener('paste', function(e) {
   handlePasteComponents(e);
 });
 
+// Paste listener for range field (parse full spell details block)
+document.getElementById('range').addEventListener('paste', function(e) {
+  handlePasteSpellDetails(e);
+});
+
 // Keyboard shortcuts for markdown formatting
 const markdownFields = ['description', 'higherLevels'];
 markdownFields.forEach(fieldId => {
@@ -277,6 +282,149 @@ function handlePasteComponents(event) {
   // Set the material field
   const materialField = document.getElementById('material');
   materialField.value = materialDescription;
+}
+
+function handlePasteSpellDetails(event) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text').trim();
+
+  // Check if this looks like a multi-line spell details block
+  // (contains at least 2 of the common field labels)
+  const fieldCount = (pastedText.match(/\b(Casting Time|Range|Components|Duration):/gi) || []).length;
+
+  if (fieldCount < 2) {
+    // Not a details block, just paste normally into range field
+    return; // Let default paste happen
+  }
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Parse each line
+  const lines = pastedText.split(/\r?\n/);
+
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+
+    // Casting Time
+    const castingTimeMatch = trimmedLine.match(/^Casting Time:\s*(.+)$/i);
+    if (castingTimeMatch) {
+      const castingTimeValue = castingTimeMatch[1].trim();
+      const castingTimeField = document.getElementById('castingTime');
+
+      // Try to map to select options
+      const castingTimeMap = {
+        'action': '1 action',
+        '1 action': '1 action',
+        'bonus action': '1 bonus action',
+        '1 bonus action': '1 bonus action',
+        'reaction': '1 reaction',
+        '1 reaction': '1 reaction',
+        '1 minute': '1 minute',
+        '10 minutes': '10 minutes',
+        '1 hour': '1 hour',
+        '8 hours': '8 hours',
+        '12 hours': '12 hours',
+        '24 hours': '24 hours'
+      };
+
+      const mappedValue = castingTimeMap[castingTimeValue.toLowerCase()];
+      if (mappedValue) {
+        castingTimeField.value = mappedValue;
+      }
+
+      // Check if there's a reaction trigger (text in parentheses)
+      const reactionTriggerMatch = castingTimeValue.match(/\(([^)]+)\)/);
+      if (reactionTriggerMatch) {
+        document.getElementById('reactionTrigger').value = reactionTriggerMatch[1].trim();
+      }
+    }
+
+    // Range
+    const rangeMatch = trimmedLine.match(/^Range:\s*(.+)$/i);
+    if (rangeMatch) {
+      document.getElementById('range').value = rangeMatch[1].trim();
+    }
+
+    // Components
+    const componentsMatch = trimmedLine.match(/^Components:\s*(.+)$/i);
+    if (componentsMatch) {
+      const componentsText = componentsMatch[1].trim();
+
+      // Check for V, S, M
+      const hasVerbal = /\bV\b/i.test(componentsText);
+      const hasSomatic = /\bS\b/i.test(componentsText);
+      const hasMaterial = /\bM\b/i.test(componentsText);
+
+      document.getElementById('verbal').checked = hasVerbal;
+      document.getElementById('somatic').checked = hasSomatic;
+      document.getElementById('materialCheck').checked = hasMaterial;
+
+      // Extract material description from parentheses
+      const materialMatch = componentsText.match(/\(([^)]+)\)/);
+      if (materialMatch) {
+        document.getElementById('material').value = materialMatch[1].trim();
+      }
+    }
+
+    // Duration
+    const durationMatch = trimmedLine.match(/^Duration:\s*(.+)$/i);
+    if (durationMatch) {
+      const durationValue = durationMatch[1].trim();
+      const durationField = document.getElementById('duration');
+      const concentrationField = document.getElementById('concentration');
+
+      // Check if it requires concentration
+      if (/^concentration/i.test(durationValue)) {
+        concentrationField.checked = true;
+
+        // Extract the actual duration after "Concentration, "
+        const actualDuration = durationValue.replace(/^concentration,?\s*/i, '').trim();
+
+        // Try to map to select options
+        const durationMap = {
+          'instantaneous': 'Instantaneous',
+          '1 round': '1 round',
+          'up to 1 minute': 'Concentration, up to 1 minute',
+          'up to 10 minutes': 'Concentration, up to 10 minutes',
+          'up to 1 hour': 'Concentration, up to 1 hour',
+          'up to 8 hours': 'Concentration, up to 8 hours',
+          '1 minute': '1 minute',
+          '10 minutes': '10 minutes',
+          '1 hour': '1 hour',
+          '8 hours': '8 hours',
+          '24 hours': '24 hours',
+          'until dispelled': 'Until dispelled',
+          'special': 'Special'
+        };
+
+        const mappedDuration = durationMap[actualDuration.toLowerCase()];
+        if (mappedDuration) {
+          durationField.value = mappedDuration;
+        }
+      } else {
+        concentrationField.checked = false;
+
+        // Map non-concentration durations
+        const durationMap = {
+          'instantaneous': 'Instantaneous',
+          '1 round': '1 round',
+          '1 minute': '1 minute',
+          '10 minutes': '10 minutes',
+          '1 hour': '1 hour',
+          '8 hours': '8 hours',
+          '24 hours': '24 hours',
+          'until dispelled': 'Until dispelled',
+          'special': 'Special'
+        };
+
+        const mappedDuration = durationMap[durationValue.toLowerCase()];
+        if (mappedDuration) {
+          durationField.value = mappedDuration;
+        }
+      }
+    }
+  }
 }
 
 function handlePasteWithFormatting(event, fieldId, previewId) {
