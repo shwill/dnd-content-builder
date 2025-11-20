@@ -146,6 +146,26 @@ document.getElementById('mythicActionContent').addEventListener('input', functio
   updateMarkdownPreview('mythicActionContent', 'mythicActionPreview');
 });
 
+// Paste parsing listeners for auto-splitting title and content
+document.getElementById('traitContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'traitTitle', 'traitContent');
+});
+document.getElementById('actionContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'actionTitle', 'actionContent');
+});
+document.getElementById('bonusActionContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'bonusActionTitle', 'bonusActionContent');
+});
+document.getElementById('reactionContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'reactionTitle', 'reactionContent');
+});
+document.getElementById('legendaryActionContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'legendaryActionTitle', 'legendaryActionContent');
+});
+document.getElementById('mythicActionContent').addEventListener('paste', function(e) {
+  handlePasteWithTitleSplit(e, 'mythicActionTitle', 'mythicActionContent');
+});
+
 // Helper functions
 function calcModifier(score) {
   if (!score) return 0;
@@ -168,6 +188,37 @@ function updateMarkdownPreview(textareaId, previewId) {
 
   // Use marked.js to convert markdown to HTML
   preview.innerHTML = marked.parse(text);
+}
+
+function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
+  // Get pasted text
+  const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Check if the pasted text contains a period
+  const firstDotIndex = pastedText.indexOf('.');
+
+  if (firstDotIndex > 0) {
+    // Prevent default paste behavior
+    event.preventDefault();
+
+    // Split on first period
+    const title = pastedText.substring(0, firstDotIndex).trim();
+    const content = pastedText.substring(firstDotIndex + 1).trim();
+
+    // Set title field (only if it's empty to avoid overwriting existing title)
+    const titleField = document.getElementById(titleFieldId);
+    if (!titleField.value) {
+      titleField.value = title;
+    }
+
+    // Set content field
+    const contentField = document.getElementById(contentFieldId);
+    contentField.value = content;
+
+    // Trigger input event to update markdown preview
+    contentField.dispatchEvent(new Event('input'));
+  }
+  // If no period found, let the default paste behavior happen
 }
 
 function calculateAverageHP() {
