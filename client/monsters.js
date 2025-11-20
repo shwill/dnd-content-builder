@@ -46,9 +46,29 @@ form.addEventListener('submit', handleSubmit);
 
 // Ability score change listeners
 ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
-  document.getElementById(ability).addEventListener('input', updateSavesAndSkills);
+  document.getElementById(ability).addEventListener('input', updateAbilitiesAndSkills);
 });
-document.getElementById('profBonus').addEventListener('input', updateSavesAndSkills);
+document.getElementById('profBonus').addEventListener('input', updateAbilitiesAndSkills);
+
+// Save click listeners (toggle proficiency)
+['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
+  document.getElementById(`${ability}Save`).addEventListener('click', function() {
+    const current = this.getAttribute('data-prof');
+    let next;
+
+    if (current === 'none') next = 'proficient';
+    else if (current === 'proficient') next = 'expert';
+    else next = 'none';
+
+    this.setAttribute('data-prof', next);
+    updateAbilitiesAndSkills();
+  });
+});
+
+// Skill proficiency change listeners
+Object.keys(skillAbilities).forEach(skill => {
+  document.getElementById(`${skill}Prof`).addEventListener('change', updateAbilitiesAndSkills);
+});
 
 // Senses and languages
 document.getElementById('addSenseBtn').addEventListener('click', addSense);
@@ -64,10 +84,10 @@ function formatBonus(bonus) {
   return bonus >= 0 ? `+${bonus}` : `${bonus}`;
 }
 
-function updateSavesAndSkills() {
+function updateAbilitiesAndSkills() {
   const profBonus = parseInt(document.getElementById('profBonus').value) || 0;
 
-  // Update saves
+  // Get ability scores
   const abilities = {
     str: parseInt(document.getElementById('str').value) || 10,
     dex: parseInt(document.getElementById('dex').value) || 10,
@@ -77,16 +97,22 @@ function updateSavesAndSkills() {
     cha: parseInt(document.getElementById('cha').value) || 10
   };
 
-  // Update save displays
+  // Update modifiers and saves
   Object.keys(abilities).forEach(ability => {
-    const modifier = calcModifier(abilities[ability]);
-    const proficiency = document.getElementById(`${ability}SaveProf`).value;
-    let bonus = modifier;
+    const score = abilities[ability];
+    const modifier = calcModifier(score);
 
-    if (proficiency === 'proficient') bonus += profBonus;
-    if (proficiency === 'expert') bonus += profBonus * 2;
+    // Update modifier display
+    document.getElementById(`${ability}Mod`).textContent = formatBonus(modifier);
 
-    document.getElementById(`${ability}SaveDisplay`).textContent = formatBonus(bonus);
+    // Update save display
+    const proficiency = document.getElementById(`${ability}Save`).getAttribute('data-prof');
+    let saveBonus = modifier;
+
+    if (proficiency === 'proficient') saveBonus += profBonus;
+    if (proficiency === 'expert') saveBonus += profBonus * 2;
+
+    document.getElementById(`${ability}SaveDisplay`).textContent = formatBonus(saveBonus);
   });
 
   // Update skill displays
@@ -102,15 +128,6 @@ function updateSavesAndSkills() {
     document.getElementById(`${skill}Display`).textContent = formatBonus(bonus);
   });
 }
-
-// Add proficiency change listeners
-['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
-  document.getElementById(`${ability}SaveProf`).addEventListener('change', updateSavesAndSkills);
-});
-
-Object.keys(skillAbilities).forEach(skill => {
-  document.getElementById(`${skill}Prof`).addEventListener('change', updateSavesAndSkills);
-});
 
 // Senses management
 function addSense() {
@@ -247,9 +264,15 @@ function showNewMonsterForm() {
   form.reset();
   sensesList = [];
   languagesList = [];
+
+  // Reset save proficiencies
+  ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
+    document.getElementById(`${ability}Save`).setAttribute('data-prof', 'none');
+  });
+
   renderSenses();
   renderLanguages();
-  updateSavesAndSkills();
+  updateAbilitiesAndSkills();
   monsterList.style.display = 'none';
   monsterForm.style.display = 'block';
 }
@@ -318,15 +341,25 @@ async function editMonster(id) {
       cha: 'charisma'
     };
 
+    // Reset all saves to none first
+    Object.keys(abilityMap).forEach(short => {
+      document.getElementById(`${short}Save`).setAttribute('data-prof', 'none');
+    });
+
+    // Load save proficiencies
     Object.keys(abilityMap).forEach(short => {
       const fullName = abilityMap[short];
       const saveData = monster.abilities?.[fullName]?.save;
       if (saveData && saveData.proficiency) {
-        document.getElementById(`${short}SaveProf`).value = saveData.proficiency;
+        document.getElementById(`${short}Save`).setAttribute('data-prof', saveData.proficiency);
       }
     });
 
-    // Load skills
+    // Reset and load skills
+    Object.keys(skillAbilities).forEach(skill => {
+      document.getElementById(`${skill}Prof`).value = 'none';
+    });
+
     if (monster.skills) {
       Object.keys(monster.skills).forEach(skillName => {
         const skill = monster.skills[skillName];
@@ -337,7 +370,7 @@ async function editMonster(id) {
     }
 
     // Update displays
-    updateSavesAndSkills();
+    updateAbilitiesAndSkills();
 
     // Senses
     sensesList = monster.senses || [];
@@ -428,7 +461,7 @@ async function handleSubmit(e) {
     const { name, score } = abilityMap[short];
     if (score) {
       const modifier = calcModifier(score);
-      const saveProf = document.getElementById(`${short}SaveProf`).value;
+      const saveProf = document.getElementById(`${short}Save`).getAttribute('data-prof');
       let saveBonus = modifier;
 
       if (saveProf === 'proficient') saveBonus += profBonus;

@@ -278,6 +278,98 @@ header p {
   gap: 15px;
 }
 
+.ability-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.ability-block {
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.ability-name {
+  font-weight: 700;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  min-width: 35px;
+}
+
+.ability-score input {
+  width: 50px;
+  padding: 6px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.ability-mod,
+.ability-save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mod-label,
+.save-label {
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.mod-value,
+.save-value {
+  font-weight: 600;
+  font-size: 0.95em;
+  min-width: 30px;
+  text-align: center;
+}
+
+.ability-save {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.ability-save:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.ability-save[data-prof="none"] {
+  background: transparent;
+}
+
+.ability-save[data-prof="proficient"] {
+  background: rgba(139, 0, 0, 0.15);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+}
+
+.ability-save[data-prof="expert"] {
+  background: rgba(139, 0, 0, 0.3);
+  border: 1px solid rgba(139, 0, 0, 0.5);
+}
+
+.help-text {
+  margin-top: 10px;
+  font-size: 0.85em;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
 .speed-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -383,6 +475,10 @@ header p {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .ability-sheet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .speed-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -416,6 +512,10 @@ header p {
 @media (max-width: 480px) {
   .ability-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ability-sheet-grid {
+    grid-template-columns: 1fr;
   }
 
   .speed-grid {

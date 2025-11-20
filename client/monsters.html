@@ -166,91 +166,103 @@
           </div>
 
           <div class="form-section">
-            <h3>Ability Scores</h3>
-            <div class="ability-grid">
-              <div class="form-group">
-                <label for="str">STR</label>
-                <input type="number" id="str" min="1" max="30">
-              </div>
-              <div class="form-group">
-                <label for="dex">DEX</label>
-                <input type="number" id="dex" min="1" max="30">
-              </div>
-              <div class="form-group">
-                <label for="con">CON</label>
-                <input type="number" id="con" min="1" max="30">
-              </div>
-              <div class="form-group">
-                <label for="int">INT</label>
-                <input type="number" id="int" min="1" max="30">
-              </div>
-              <div class="form-group">
-                <label for="wis">WIS</label>
-                <input type="number" id="wis" min="1" max="30">
-              </div>
-              <div class="form-group">
-                <label for="cha">CHA</label>
-                <input type="number" id="cha" min="1" max="30">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>Saving Throws</h3>
-            <div class="saves-grid">
-              <div class="save-item">
-                <span class="save-label">STR Save: <span id="strSaveDisplay">+0</span></span>
-                <select id="strSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-              <div class="save-item">
-                <span class="save-label">DEX Save: <span id="dexSaveDisplay">+0</span></span>
-                <select id="dexSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-              <div class="save-item">
-                <span class="save-label">CON Save: <span id="conSaveDisplay">+0</span></span>
-                <select id="conSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-              <div class="save-item">
-                <span class="save-label">INT Save: <span id="intSaveDisplay">+0</span></span>
-                <select id="intSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-              <div class="save-item">
-                <span class="save-label">WIS Save: <span id="wisSaveDisplay">+0</span></span>
-                <select id="wisSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-              <div class="save-item">
-                <span class="save-label">CHA Save: <span id="chaSaveDisplay">+0</span></span>
-                <select id="chaSaveProf">
-                  <option value="none">None</option>
-                  <option value="proficient">Proficient</option>
-                  <option value="expert">Expert</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group mt-20">
+            <h3>Ability Scores &amp; Saves</h3>
+            <div class="form-group mb-20">
               <label for="profBonus">Proficiency Bonus</label>
-              <input type="number" id="profBonus" min="0" value="2">
+              <input type="number" id="profBonus" min="0" value="2" style="width: 100px;">
             </div>
+            <div class="ability-sheet-grid">
+              <div class="ability-block">
+                <div class="ability-name">Str</div>
+                <div class="ability-score">
+                  <input type="number" id="str" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="strMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="strSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="strSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Dex</div>
+                <div class="ability-score">
+                  <input type="number" id="dex" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="dexMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="dexSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="dexSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Con</div>
+                <div class="ability-score">
+                  <input type="number" id="con" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="conMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="conSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="conSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Int</div>
+                <div class="ability-score">
+                  <input type="number" id="int" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="intMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="intSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="intSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Wis</div>
+                <div class="ability-score">
+                  <input type="number" id="wis" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="wisMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="wisSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="wisSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Cha</div>
+                <div class="ability-score">
+                  <input type="number" id="cha" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="chaMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="chaSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="chaSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+            </div>
+            <p class="help-text">Click on SAVE to toggle: None → Proficient → Expert</p>
           </div>
 
           <div class="form-section">
