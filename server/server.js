@@ -27,20 +27,73 @@ function generateId(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Helper to sanitize source for directory name
+function sanitizeSource(source) {
+  if (!source || source.trim() === '') {
+    return 'uncategorized';
+  }
+  return source.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+// Helper to recursively read all JSON files from a directory
+async function readAllJsonFiles(baseDir) {
+  const results = [];
+
+  async function scan(dir, sourcePath = '') {
+    try {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          // Recursively scan subdirectories
+          await scan(fullPath, sourcePath ? `${sourcePath}/${entry.name}` : entry.name);
+        } else if (entry.isFile() && entry.name.endsWith('.json')) {
+          const content = await fs.readFile(fullPath, 'utf8');
+          const id = sourcePath ? `${sourcePath}/${entry.name.replace('.json', '')}` : entry.name.replace('.json', '');
+          results.push({ id, ...JSON.parse(content) });
+        }
+      }
+    } catch (error) {
+      // Directory might not exist yet, that's okay
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
+  }
+
+  await scan(baseDir);
+  return results;
+}
+
+// Helper to find a file across all source directories
+async function findFileById(baseDir, id) {
+  // First try direct path (includes source directory)
+  const directPath = path.join(baseDir, `${id}.json`);
+  try {
+    const content = await fs.readFile(directPath, 'utf8');
+    return { path: directPath, content };
+  } catch (error) {
+    // Not found with direct path
+  }
+
+  // Try searching in root directory (for backwards compatibility)
+  const rootPath = path.join(baseDir, `${id}.json`);
+  try {
+    const content = await fs.readFile(rootPath, 'utf8');
+    return { path: rootPath, content };
+  } catch (error) {
+    throw new Error('File not found');
+  }
+}
+
 // ===== MONSTER ENDPOINTS =====
 
 // Get all monsters
 app.get('/api/monsters', async (req, res) => {
   try {
-    const files = await fs.readdir(MONSTERS_DIR);
-    const monsters = await Promise.all(
-      files
-        .filter(f => f.endsWith('.json'))
-        .map(async file => {
-          const content = await fs.readFile(path.join(MONSTERS_DIR, file), 'utf8');
-          return { id: file.replace('.json', ''), ...JSON.parse(content) };
-        })
-    );
+    const monsters = await readAllJsonFiles(MONSTERS_DIR);
     res.json(monsters);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -48,12 +101,9 @@ app.get('/api/monsters', async (req, res) => {
 });
 
 // Get single monster
-app.get('/api/monsters/:id', async (req, res) => {
+app.get('/api/monsters/:id(*)', async (req, res) => {
   try {
-    const content = await fs.readFile(
-      path.join(MONSTERS_DIR, `${req.params.id}.json`),
-      'utf8'
-    );
+    const { content } = await findFileById(MONSTERS_DIR, req.params.id);
     res.json({ id: req.params.id, ...JSON.parse(content) });
   } catch (error) {
     res.status(404).json({ error: 'Monster not found' });
@@ -64,8 +114,14 @@ app.get('/api/monsters/:id', async (req, res) => {
 app.post('/api/monsters', async (req, res) => {
   try {
     const data = req.body;
-    const id = generateId(data.monster.name);
-    const filename = path.join(MONSTERS_DIR, `${id}.json`);
+    const nameId = generateId(data.monster.name);
+    const sourceDir = sanitizeSource(data.monster.meta?.source);
+    const id = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(MONSTERS_DIR, sourceDir);
+    const filename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Add metadata
     if (!data.monster.meta) {
@@ -83,10 +139,20 @@ app.post('/api/monsters', async (req, res) => {
 });
 
 // Update monster
-app.put('/api/monsters/:id', async (req, res) => {
+app.put('/api/monsters/:id(*)', async (req, res) => {
   try {
     const data = req.body;
-    const filename = path.join(MONSTERS_DIR, `${req.params.id}.json`);
+    const oldFile = await findFileById(MONSTERS_DIR, req.params.id);
+
+    // Generate new path based on current source
+    const nameId = generateId(data.monster.name);
+    const sourceDir = sanitizeSource(data.monster.meta?.source);
+    const newId = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(MONSTERS_DIR, sourceDir);
+    const newFilename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Update timestamp
     if (!data.monster.meta) {
@@ -94,17 +160,28 @@ app.put('/api/monsters/:id', async (req, res) => {
     }
     data.monster.meta.timestamp = new Date().toISOString();
 
-    await fs.writeFile(filename, JSON.stringify(data, null, 2));
-    res.json({ id: req.params.id, ...data });
+    await fs.writeFile(newFilename, JSON.stringify(data, null, 2));
+
+    // If the file path changed, delete the old file
+    if (oldFile.path !== newFilename) {
+      try {
+        await fs.unlink(oldFile.path);
+      } catch (error) {
+        // Old file already gone, that's okay
+      }
+    }
+
+    res.json({ id: newId, ...data });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // Delete monster
-app.delete('/api/monsters/:id', async (req, res) => {
+app.delete('/api/monsters/:id(*)', async (req, res) => {
   try {
-    await fs.unlink(path.join(MONSTERS_DIR, `${req.params.id}.json`));
+    const { path: filePath } = await findFileById(MONSTERS_DIR, req.params.id);
+    await fs.unlink(filePath);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -112,22 +189,25 @@ app.delete('/api/monsters/:id', async (req, res) => {
 });
 
 // Duplicate monster
-app.post('/api/monsters/:id/duplicate', async (req, res) => {
+app.post('/api/monsters/:id(*)/duplicate', async (req, res) => {
   try {
-    const content = await fs.readFile(
-      path.join(MONSTERS_DIR, `${req.params.id}.json`),
-      'utf8'
-    );
+    const { content } = await findFileById(MONSTERS_DIR, req.params.id);
     const data = JSON.parse(content);
 
     // Modify name and generate new ID
     data.monster.name = `${data.monster.name} (Copy)`;
-    const newId = generateId(data.monster.name) + '-' + Date.now();
+    const nameId = generateId(data.monster.name) + '-' + Date.now();
+    const sourceDir = sanitizeSource(data.monster.meta?.source);
+    const newId = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(MONSTERS_DIR, sourceDir);
+    const filename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Update metadata
     data.monster.meta.timestamp = new Date().toISOString();
 
-    const filename = path.join(MONSTERS_DIR, `${newId}.json`);
     await fs.writeFile(filename, JSON.stringify(data, null, 2));
     res.json({ id: newId, ...data });
   } catch (error) {
@@ -140,15 +220,7 @@ app.post('/api/monsters/:id/duplicate', async (req, res) => {
 // Get all spells
 app.get('/api/spells', async (req, res) => {
   try {
-    const files = await fs.readdir(SPELLS_DIR);
-    const spells = await Promise.all(
-      files
-        .filter(f => f.endsWith('.json'))
-        .map(async file => {
-          const content = await fs.readFile(path.join(SPELLS_DIR, file), 'utf8');
-          return { id: file.replace('.json', ''), ...JSON.parse(content) };
-        })
-    );
+    const spells = await readAllJsonFiles(SPELLS_DIR);
     res.json(spells);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -156,12 +228,9 @@ app.get('/api/spells', async (req, res) => {
 });
 
 // Get single spell
-app.get('/api/spells/:id', async (req, res) => {
+app.get('/api/spells/:id(*)', async (req, res) => {
   try {
-    const content = await fs.readFile(
-      path.join(SPELLS_DIR, `${req.params.id}.json`),
-      'utf8'
-    );
+    const { content } = await findFileById(SPELLS_DIR, req.params.id);
     res.json({ id: req.params.id, ...JSON.parse(content) });
   } catch (error) {
     res.status(404).json({ error: 'Spell not found' });
@@ -172,8 +241,14 @@ app.get('/api/spells/:id', async (req, res) => {
 app.post('/api/spells', async (req, res) => {
   try {
     const data = req.body;
-    const id = generateId(data.spell.name);
-    const filename = path.join(SPELLS_DIR, `${id}.json`);
+    const nameId = generateId(data.spell.name);
+    const sourceDir = sanitizeSource(data.spell.meta?.source);
+    const id = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(SPELLS_DIR, sourceDir);
+    const filename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Add metadata
     if (!data.spell.meta) {
@@ -191,10 +266,20 @@ app.post('/api/spells', async (req, res) => {
 });
 
 // Update spell
-app.put('/api/spells/:id', async (req, res) => {
+app.put('/api/spells/:id(*)', async (req, res) => {
   try {
     const data = req.body;
-    const filename = path.join(SPELLS_DIR, `${req.params.id}.json`);
+    const oldFile = await findFileById(SPELLS_DIR, req.params.id);
+
+    // Generate new path based on current source
+    const nameId = generateId(data.spell.name);
+    const sourceDir = sanitizeSource(data.spell.meta?.source);
+    const newId = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(SPELLS_DIR, sourceDir);
+    const newFilename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Update timestamp
     if (!data.spell.meta) {
@@ -202,17 +287,28 @@ app.put('/api/spells/:id', async (req, res) => {
     }
     data.spell.meta.timestamp = new Date().toISOString();
 
-    await fs.writeFile(filename, JSON.stringify(data, null, 2));
-    res.json({ id: req.params.id, ...data });
+    await fs.writeFile(newFilename, JSON.stringify(data, null, 2));
+
+    // If the file path changed, delete the old file
+    if (oldFile.path !== newFilename) {
+      try {
+        await fs.unlink(oldFile.path);
+      } catch (error) {
+        // Old file already gone, that's okay
+      }
+    }
+
+    res.json({ id: newId, ...data });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // Delete spell
-app.delete('/api/spells/:id', async (req, res) => {
+app.delete('/api/spells/:id(*)', async (req, res) => {
   try {
-    await fs.unlink(path.join(SPELLS_DIR, `${req.params.id}.json`));
+    const { path: filePath } = await findFileById(SPELLS_DIR, req.params.id);
+    await fs.unlink(filePath);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -220,22 +316,25 @@ app.delete('/api/spells/:id', async (req, res) => {
 });
 
 // Duplicate spell
-app.post('/api/spells/:id/duplicate', async (req, res) => {
+app.post('/api/spells/:id(*)/duplicate', async (req, res) => {
   try {
-    const content = await fs.readFile(
-      path.join(SPELLS_DIR, `${req.params.id}.json`),
-      'utf8'
-    );
+    const { content } = await findFileById(SPELLS_DIR, req.params.id);
     const data = JSON.parse(content);
 
     // Modify name and generate new ID
     data.spell.name = `${data.spell.name} (Copy)`;
-    const newId = generateId(data.spell.name) + '-' + Date.now();
+    const nameId = generateId(data.spell.name) + '-' + Date.now();
+    const sourceDir = sanitizeSource(data.spell.meta?.source);
+    const newId = `${sourceDir}/${nameId}`;
+    const dirPath = path.join(SPELLS_DIR, sourceDir);
+    const filename = path.join(dirPath, `${nameId}.json`);
+
+    // Ensure source directory exists
+    await fs.mkdir(dirPath, { recursive: true });
 
     // Update metadata
     data.spell.meta.timestamp = new Date().toISOString();
 
-    const filename = path.join(SPELLS_DIR, `${newId}.json`);
     await fs.writeFile(filename, JSON.stringify(data, null, 2));
     res.json({ id: newId, ...data });
   } catch (error) {
