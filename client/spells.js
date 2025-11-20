@@ -65,6 +65,12 @@ function handleMarkdownShortcuts(event) {
   } else if (event.ctrlKey && (event.key === 'i' || event.key === 'I')) {
     event.preventDefault();
     toggleMarkdownFormat(event.target, '_');
+  } else if (event.ctrlKey && (event.key === 'm' || event.key === 'M')) {
+    event.preventDefault();
+    insertMarkdownLink(event.target, 'monster');
+  } else if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+    event.preventDefault();
+    insertMarkdownLink(event.target, 'spell');
   }
 }
 
@@ -88,6 +94,35 @@ function toggleMarkdownFormat(textarea, marker) {
     textarea.value = beforeText + marker + selectedText + marker + afterText;
     textarea.setSelectionRange(start + markerLen, end + markerLen);
   }
+
+  // Trigger input event to update preview
+  textarea.dispatchEvent(new Event('input'));
+}
+
+function insertMarkdownLink(textarea, linkType) {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+
+  if (!selectedText) {
+    return; // Nothing selected, do nothing
+  }
+
+  const beforeText = textarea.value.substring(0, start);
+  const afterText = textarea.value.substring(end);
+
+  // Create slug from selected text (lowercase, spaces to hyphens)
+  const slug = selectedText.toLowerCase().replace(/\s+/g, '-');
+
+  // Create markdown link: [Text](type/slug)
+  const markdownLink = `[${selectedText}](${linkType}/${slug})`;
+
+  // Replace selected text with markdown link
+  textarea.value = beforeText + markdownLink + afterText;
+
+  // Set cursor position at the end of the inserted link
+  const newPosition = start + markdownLink.length;
+  textarea.setSelectionRange(newPosition, newPosition);
 
   // Trigger input event to update preview
   textarea.dispatchEvent(new Event('input'));
