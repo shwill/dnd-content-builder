@@ -380,6 +380,13 @@ function removeSkill(index) {
   renderSkills();
 }
 
+function toggleSkillProficiency(index) {
+  const skill = skillsList[index];
+  // Toggle between proficient and expert
+  skill.proficiency = skill.proficiency === 'proficient' ? 'expert' : 'proficient';
+  renderSkills();
+}
+
 function renderSkills() {
   const container = document.getElementById('skillsList');
   if (skillsList.length === 0) {
@@ -408,8 +415,10 @@ function renderSkills() {
     const profLabel = skill.proficiency === 'expert' ? 'Expert' : 'Proficient';
 
     return `
-      <div class="tag">
-        <span><strong>${skillNames[skill.key]}</strong>: ${formatBonus(bonus)} (${profLabel})</span>
+      <div class="tag skill-tag">
+        <span class="skill-content" onclick="toggleSkillProficiency(${index})">
+          <strong>${skillNames[skill.key]}</strong>: ${formatBonus(bonus)} (${profLabel})
+        </span>
         <button type="button" onclick="removeSkill(${index})">×</button>
       </div>
     `;
@@ -1174,6 +1183,7 @@ window.editMonster = editMonster;
 window.deleteMonster = deleteMonster;
 window.duplicateMonster = duplicateMonster;
 window.removeSkill = removeSkill;
+window.toggleSkillProficiency = toggleSkillProficiency;
 window.removeSense = removeSense;
 window.removeLanguage = removeLanguage;
 window.removeTrait = removeTrait;

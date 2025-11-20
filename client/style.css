@@ -457,6 +457,20 @@ header p {
   color: var(--primary-dark);
 }
 
+.skill-content {
+  cursor: pointer;
+  transition: color 0.2s;
+  flex: 1;
+}
+
+.skill-content:hover {
+  color: var(--primary);
+}
+
+.skill-tag {
+  user-select: none;
+}
+
 .items-list {
   display: flex;
   flex-direction: column;
