@@ -206,6 +206,25 @@ function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
   // Join paragraphs back with double newlines
   pastedText = cleanedParagraphs.join('\n\n');
 
+  // Auto-format common D&D patterns with markdown italics
+  // Attack Roll patterns
+  pastedText = pastedText.replace(/\b(Melee or Ranged Attack Roll):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Melee Attack Roll):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Ranged Attack Roll):/g, '_$1:_');
+
+  // Saving Throw patterns (all ability scores)
+  pastedText = pastedText.replace(/\b(Strength Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Dexterity Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Constitution Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Intelligence Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Wisdom Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Charisma Saving Throw):/g, '_$1:_');
+
+  // Common result patterns
+  pastedText = pastedText.replace(/\b(Hit):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Failure):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Success):/g, '_$1:_');
+
   // Check if the pasted text contains a period
   const firstDotIndex = pastedText.indexOf('.');
 
