@@ -165,17 +165,25 @@ function handlePasteSpellHeader(event) {
       school = cantripMatch[1].toLowerCase();
     }
   }
-  // Check for "Nth-level School" pattern
+  // Check for "Nth-level School" pattern (e.g., "1st-level Abjuration")
   else {
     const levelMatch = pastedText.match(/^(\d+)(st|nd|rd|th)-level\s+(\w+)/i);
     if (levelMatch) {
       level = levelMatch[1];
       school = levelMatch[3].toLowerCase();
-    } else {
-      // If no level specified, try to extract just the school
-      const schoolMatch = pastedText.match(/^(\w+)/);
-      if (schoolMatch) {
-        school = schoolMatch[1].toLowerCase();
+    }
+    // Check for "Level N School" pattern (e.g., "Level 1 Abjuration")
+    else {
+      const levelMatch2 = pastedText.match(/^level\s+(\d+)\s+(\w+)/i);
+      if (levelMatch2) {
+        level = levelMatch2[1];
+        school = levelMatch2[2].toLowerCase();
+      } else {
+        // If no level specified, try to extract just the school
+        const schoolMatch = pastedText.match(/^(\w+)/);
+        if (schoolMatch) {
+          school = schoolMatch[1].toLowerCase();
+        }
       }
     }
   }
