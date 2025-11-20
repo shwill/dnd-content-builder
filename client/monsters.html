@@ -103,7 +103,11 @@
 
             <div class="form-group">
               <label for="source">Source</label>
-              <input type="text" id="source" placeholder="e.g., Monster Manual, Volo's Guide to Monsters">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <input type="text" id="source" placeholder="e.g., Monster Manual, Volo's Guide to Monsters" style="flex: 1;">
+                <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('source').value='SRD 5.1'">SRD 5.1</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('source').value='SRD 5.2.1'">SRD 5.2.1</button>
+              </div>
               <small>The book or source where this monster appears</small>
             </div>
           </div>
