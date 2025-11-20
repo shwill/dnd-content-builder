@@ -565,8 +565,15 @@ async function handleSubmit(e) {
       body: JSON.stringify(spellData)
     });
 
-    hideForm();
+    // Save the source value before resetting the form
+    const savedSource = document.getElementById('source').value;
+
+    // Reload the spells list (in background)
     loadSpells();
+
+    // Show a new spell form with the source pre-filled
+    showNewSpellForm();
+    document.getElementById('source').value = savedSource;
   } catch (error) {
     console.error('Error saving spell:', error);
     alert('Error saving spell');

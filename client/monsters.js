@@ -1331,8 +1331,15 @@ async function handleSubmit(e) {
       body: JSON.stringify(monsterData)
     });
 
-    hideForm();
+    // Save the source value before resetting the form
+    const savedSource = document.getElementById('source').value;
+
+    // Reload the monsters list (in background)
     loadMonsters();
+
+    // Show a new monster form with the source pre-filled
+    showNewMonsterForm();
+    document.getElementById('source').value = savedSource;
   } catch (error) {
     console.error('Error saving monster:', error);
     alert('Error saving monster');
