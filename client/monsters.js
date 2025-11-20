@@ -997,6 +997,7 @@ async function editMonster(id) {
     renderReactions();
     legendaryActionsList = monster.legendaryActions || [];
     renderLegendaryActions();
+    document.getElementById('legendaryActionsIntro').value = monster.legendaryActionsIntro || '';
     mythicActionsList = monster.mythicActions || [];
     renderMythicActions();
 
@@ -1174,7 +1175,7 @@ async function handleSubmit(e) {
       bonusActions: bonusActionsList.length > 0 ? bonusActionsList : null,
       reactions: reactionsList.length > 0 ? reactionsList : null,
       legendaryActions: legendaryActionsList.length > 0 ? legendaryActionsList : null,
-      legendaryActionsIntro: null,
+      legendaryActionsIntro: document.getElementById('legendaryActionsIntro').value || null,
       mythicActions: mythicActionsList.length > 0 ? mythicActionsList : null,
       lairActions: null,
       meta: {
