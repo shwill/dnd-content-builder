@@ -14,7 +14,12 @@
           <h1>Spell Builder</h1>
           <a href="index.html" class="breadcrumb">← Back to Home</a>
         </div>
-        <button id="newSpellBtn" class="btn btn-primary">+ New Spell</button>
+        <div style="display: flex; gap: 10px; align-items: flex-start;">
+          <div style="flex: 1;">
+            <textarea id="quickPasteArea" placeholder="Quick paste: Paste complete spell header here (name, level, casting details...)" rows="3" style="width: 100%; font-size: 0.9em; padding: 8px; border: 2px dashed #ddd; border-radius: 4px;"></textarea>
+          </div>
+          <button id="newSpellBtn" class="btn btn-primary" style="white-space: nowrap;">+ New Spell</button>
+        </div>
       </div>
     </header>
 

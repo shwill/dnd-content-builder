@@ -56,6 +56,11 @@ document.getElementById('range').addEventListener('paste', function(e) {
   handlePasteSpellDetails(e);
 });
 
+// Quick paste area listener
+document.getElementById('quickPasteArea').addEventListener('paste', function(e) {
+  handleQuickPaste(e);
+});
+
 // Keyboard shortcuts for markdown formatting
 const markdownFields = ['description', 'higherLevels'];
 markdownFields.forEach(fieldId => {
@@ -295,6 +300,186 @@ function handlePasteComponents(event) {
   // Set the material field
   const materialField = document.getElementById('material');
   materialField.value = materialDescription;
+}
+
+function handleQuickPaste(event) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text').trim();
+
+  // Prevent default paste
+  event.preventDefault();
+
+  // Clear the quick paste area
+  document.getElementById('quickPasteArea').value = '';
+
+  // Parse lines
+  const lines = pastedText.split(/\r\n|\r|\n/).filter(line => line.trim());
+
+  if (lines.length === 0) return;
+
+  // Show new spell form
+  showNewSpellForm();
+
+  // Line 1: Spell name
+  const spellName = lines[0].trim();
+  document.getElementById('name').value = spellName
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  // Line 2: Level, School, Classes (e.g., "Level 4 Enchantment (Bard, Druid)")
+  if (lines.length > 1) {
+    const headerLine = lines[1].trim();
+
+    // Normalize dashes
+    const normalizedHeader = headerLine.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, '-');
+
+    // Extract classes from parentheses
+    let classes = '';
+    const classesMatch = normalizedHeader.match(/\(([^)]+)\)/);
+    if (classesMatch) {
+      classes = classesMatch[1].trim();
+      document.getElementById('classes').value = classes;
+    }
+
+    // Remove parentheses for level/school parsing
+    const headerWithoutClasses = normalizedHeader.replace(/\s*\([^)]+\)/, '').trim();
+
+    // Parse level and school
+    let level = '';
+    let school = '';
+
+    if (/\bcantrip\b/i.test(headerWithoutClasses)) {
+      level = '0';
+      const cantripMatch = headerWithoutClasses.match(/^(\w+)\s+cantrip/i);
+      if (cantripMatch) {
+        school = cantripMatch[1].toLowerCase();
+      }
+    } else {
+      const levelMatch = headerWithoutClasses.match(/^(\d+)(st|nd|rd|th)-level\s+(\w+)/i);
+      if (levelMatch) {
+        level = levelMatch[1];
+        school = levelMatch[3].toLowerCase();
+      } else {
+        const levelMatch2 = headerWithoutClasses.match(/^level\s+(\d+)\s+(\w+)/i);
+        if (levelMatch2) {
+          level = levelMatch2[1];
+          school = levelMatch2[2].toLowerCase();
+        }
+      }
+    }
+
+    if (level) document.getElementById('level').value = level;
+    if (school) document.getElementById('school').value = school;
+  }
+
+  // Parse remaining lines for spell details
+  for (let i = 2; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Casting Time
+    const castingTimeMatch = line.match(/^Casting Time:\s*(.+)$/i);
+    if (castingTimeMatch) {
+      const castingTimeValue = castingTimeMatch[1].trim();
+      const castingTimeMap = {
+        'action': '1 action',
+        '1 action': '1 action',
+        'bonus action': '1 bonus action',
+        '1 bonus action': '1 bonus action',
+        'reaction': '1 reaction',
+        '1 reaction': '1 reaction',
+        '1 minute': '1 minute',
+        '10 minutes': '10 minutes',
+        '1 hour': '1 hour',
+        '8 hours': '8 hours',
+        '12 hours': '12 hours',
+        '24 hours': '24 hours'
+      };
+
+      const mappedValue = castingTimeMap[castingTimeValue.toLowerCase()];
+      if (mappedValue) {
+        document.getElementById('castingTime').value = mappedValue;
+      }
+
+      const reactionTriggerMatch = castingTimeValue.match(/\(([^)]+)\)/);
+      if (reactionTriggerMatch) {
+        document.getElementById('reactionTrigger').value = reactionTriggerMatch[1].trim();
+      }
+    }
+
+    // Range
+    const rangeMatch = line.match(/^Range:\s*(.+)$/i);
+    if (rangeMatch) {
+      document.getElementById('range').value = rangeMatch[1].trim();
+    }
+
+    // Components
+    const componentsMatch = line.match(/^Components:\s*(.+)$/i);
+    if (componentsMatch) {
+      const componentsText = componentsMatch[1].trim();
+
+      document.getElementById('verbal').checked = /\bV\b/i.test(componentsText);
+      document.getElementById('somatic').checked = /\bS\b/i.test(componentsText);
+      document.getElementById('materialCheck').checked = /\bM\b/i.test(componentsText);
+
+      const materialMatch = componentsText.match(/\(([^)]+)\)/);
+      if (materialMatch) {
+        document.getElementById('material').value = materialMatch[1].trim();
+      }
+    }
+
+    // Duration
+    const durationMatch = line.match(/^Duration:\s*(.+)$/i);
+    if (durationMatch) {
+      const durationValue = durationMatch[1].trim();
+
+      if (/^concentration/i.test(durationValue)) {
+        document.getElementById('concentration').checked = true;
+
+        const actualDuration = durationValue.replace(/^concentration,?\s*/i, '').trim();
+        const durationMap = {
+          'instantaneous': 'Instantaneous',
+          '1 round': '1 round',
+          'up to 1 minute': 'Concentration, up to 1 minute',
+          'up to 10 minutes': 'Concentration, up to 10 minutes',
+          'up to 1 hour': 'Concentration, up to 1 hour',
+          'up to 8 hours': 'Concentration, up to 8 hours',
+          '1 minute': '1 minute',
+          '10 minutes': '10 minutes',
+          '1 hour': '1 hour',
+          '8 hours': '8 hours',
+          '24 hours': '24 hours',
+          'until dispelled': 'Until dispelled',
+          'special': 'Special'
+        };
+
+        const mappedDuration = durationMap[actualDuration.toLowerCase()];
+        if (mappedDuration) {
+          document.getElementById('duration').value = mappedDuration;
+        }
+      } else {
+        document.getElementById('concentration').checked = false;
+
+        const durationMap = {
+          'instantaneous': 'Instantaneous',
+          '1 round': '1 round',
+          '1 minute': '1 minute',
+          '10 minutes': '10 minutes',
+          '1 hour': '1 hour',
+          '8 hours': '8 hours',
+          '24 hours': '24 hours',
+          'until dispelled': 'Until dispelled',
+          'special': 'Special'
+        };
+
+        const mappedDuration = durationMap[durationValue.toLowerCase()];
+        if (mappedDuration) {
+          document.getElementById('duration').value = mappedDuration;
+        }
+      }
+    }
+  }
 }
 
 function handlePasteSpellDetails(event) {
