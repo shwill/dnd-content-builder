@@ -113,6 +113,7 @@ async function editSpell(id) {
     document.getElementById('level').value = spell.level !== null ? spell.level : '';
     document.getElementById('school').value = spell.school || '';
     document.getElementById('classes').value = spell.meta?.classes?.join(', ') || '';
+    document.getElementById('source').value = spell.meta?.source || '';
 
     // Casting details
     document.getElementById('castingTime').value = spell.castingTime?.value || '';
@@ -214,7 +215,7 @@ async function handleSubmit(e) {
         tags: document.getElementById('tags').value
           ? document.getElementById('tags').value.split(',').map(s => s.trim())
           : [],
-        source: null,
+        source: document.getElementById('source').value || null,
         classes: document.getElementById('classes').value
           ? document.getElementById('classes').value.split(',').map(s => s.trim())
           : []

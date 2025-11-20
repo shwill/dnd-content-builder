@@ -915,6 +915,9 @@ async function editMonster(id) {
     document.getElementById('damageVulnerabilities').value = monster.damageVulnerabilities?.join('; ') || '';
     document.getElementById('conditionImmunities').value = monster.conditionImmunities?.join('; ') || '';
 
+    // Source
+    document.getElementById('source').value = monster.meta?.source || '';
+
     monsterList.style.display = 'none';
     monsterForm.style.display = 'block';
   } catch (error) {
@@ -1090,7 +1093,7 @@ async function handleSubmit(e) {
         edition: null,
         tags: null,
         habitat: null,
-        source: null
+        source: document.getElementById('source').value || null
       }
     }
   };
