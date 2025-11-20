@@ -41,6 +41,48 @@ document.getElementById('name').addEventListener('paste', function(e) {
   handlePasteTitleCase(e, 'name');
 });
 
+// Keyboard shortcuts for markdown formatting
+const markdownFields = ['description', 'higherLevels'];
+markdownFields.forEach(fieldId => {
+  document.getElementById(fieldId).addEventListener('keydown', handleMarkdownShortcuts);
+});
+
+function handleMarkdownShortcuts(event) {
+  // Check for Ctrl+B (bold) or Ctrl+I (italic)
+  if (event.ctrlKey && (event.key === 'b' || event.key === 'B')) {
+    event.preventDefault();
+    toggleMarkdownFormat(event.target, '**');
+  } else if (event.ctrlKey && (event.key === 'i' || event.key === 'I')) {
+    event.preventDefault();
+    toggleMarkdownFormat(event.target, '_');
+  }
+}
+
+function toggleMarkdownFormat(textarea, marker) {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+  const beforeText = textarea.value.substring(0, start);
+  const afterText = textarea.value.substring(end);
+
+  // Check if already formatted
+  const markerLen = marker.length;
+  const isFormatted = beforeText.endsWith(marker) && afterText.startsWith(marker);
+
+  if (isFormatted) {
+    // Remove formatting
+    textarea.value = beforeText.slice(0, -markerLen) + selectedText + afterText.slice(markerLen);
+    textarea.setSelectionRange(start - markerLen, end - markerLen);
+  } else {
+    // Add formatting
+    textarea.value = beforeText + marker + selectedText + marker + afterText;
+    textarea.setSelectionRange(start + markerLen, end + markerLen);
+  }
+
+  // Trigger input event to update preview
+  textarea.dispatchEvent(new Event('input'));
+}
+
 // Helper function for markdown preview
 function updateMarkdownPreview(textareaId, previewId) {
   const textarea = document.getElementById(textareaId);
