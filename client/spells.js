@@ -154,13 +154,11 @@ function updateMarkdownPreview(textareaId, previewId) {
 }
 
 function cleanupLineBreaks(text) {
-  // Clean up line breaks from PDFs: handle \r specially to insert blank lines
+  // Clean up line breaks from PDFs: preserve paragraph breaks (blank lines) but remove single line breaks
   // Special handling for markdown tables which need line breaks preserved
 
-  // First, normalize line endings:
-  // - \r\n stays as \n (single line break)
-  // - standalone \r becomes \n\n (blank line)
-  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n\n');
+  // Normalize all line endings to \n
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
   // Split by blank lines (one or more empty lines with possible whitespace)
   const paragraphs = text.split(/\n\s*\n+/);
@@ -176,8 +174,8 @@ function cleanupLineBreaks(text) {
       // Preserve line breaks for tables, just trim each line
       return lines.map(line => line.trim()).join('\n');
     } else {
-      // Regular paragraph: preserve line breaks, but trim each line and normalize spaces
-      return lines.map(line => line.trim().replace(/\s+/g, ' ')).join('\n');
+      // Regular paragraph: replace single newlines with spaces and normalize whitespace
+      return para.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
     }
   }).filter(para => para.length > 0); // Remove empty paragraphs
 
