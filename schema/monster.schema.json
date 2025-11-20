@@ -1,0 +1,350 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://artificery.io/schemas/ddb/monster.schema.json",
+  "title": "D&D Beyond Monster",
+  "description": "Schema for monster data extracted from D&D Beyond",
+  "type": "object",
+  "required": ["monster"],
+  "properties": {
+    "monster": {
+      "type": "object",
+      "description": "Monster stat block data",
+      "required": ["name", "meta"],
+      "properties": {
+        "meta": {
+          "type": "object",
+          "description": "Metadata about the extraction",
+          "required": ["url", "timestamp", "sourceVersion"],
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "URL path of the D&D Beyond monster page"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp of when the data was extracted"
+            },
+            "sourceVersion": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$",
+              "description": "Version of the extraction source (semver)"
+            },
+            "edition": {
+              "type": "string",
+              "enum": ["2014", "2024"],
+              "description": "D&D edition"
+            },
+            "tags": {
+              "type": ["array", "null"],
+              "description": "Monster tags",
+              "items": {
+                "type": "string"
+              }
+            },
+            "habitat": {
+              "type": ["array", "null"],
+              "description": "Monster habitats",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source": {
+              "type": ["string", "null"],
+              "description": "Source book name (e.g., 'SRD 5.1', 'SRD 5.2.1')"
+            }
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the monster"
+        },
+        "size": {
+          "type": ["string", "null"],
+          "enum": ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan", null],
+          "description": "Size category of the monster"
+        },
+        "type": {
+          "type": ["string", "null"],
+          "description": "Creature type (e.g., 'Humanoid', 'Dragon', 'Undead')"
+        },
+        "subType": {
+          "type": ["string", "null"],
+          "description": "Creature subtype (e.g., 'Elf', 'Goblinoid')"
+        },
+        "alignment": {
+          "type": ["string", "null"],
+          "description": "Alignment (e.g., 'Lawful Evil', 'Unaligned')"
+        },
+        "armor": {
+          "type": ["object", "null"],
+          "properties": {
+            "ac": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "type": {
+              "type": ["string", "null"],
+              "description": "Armor type (e.g., 'natural armor', 'plate')"
+            },
+            "notes": {
+              "type": ["string", "null"],
+              "description": "Additional armor notes"
+            }
+          }
+        },
+        "hitPoints": {
+          "type": ["object", "null"],
+          "properties": {
+            "hp": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "formula": {
+              "type": ["string", "null"],
+              "description": "Dice formula (e.g., '8d8+16')"
+            }
+          }
+        },
+        "speed": {
+          "type": ["object", "null"],
+          "description": "Movement speeds",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "proficiencyBonus": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Proficiency bonus"
+        },
+        "initiative": {
+          "type": ["integer", "null"],
+          "description": "Initiative bonus (parsed from stat block or calculated from Dex modifier)"
+        },
+        "abilities": {
+          "type": ["object", "null"],
+          "description": "Ability scores",
+          "properties": {
+            "strength": {
+              "$ref": "#/definitions/ability"
+            },
+            "dexterity": {
+              "$ref": "#/definitions/ability"
+            },
+            "constitution": {
+              "$ref": "#/definitions/ability"
+            },
+            "intelligence": {
+              "$ref": "#/definitions/ability"
+            },
+            "wisdom": {
+              "$ref": "#/definitions/ability"
+            },
+            "charisma": {
+              "$ref": "#/definitions/ability"
+            }
+          }
+        },
+        "skills": {
+          "type": ["object", "null"],
+          "description": "Skill bonuses",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "bonus": {
+                "type": "integer"
+              },
+              "proficiency": {
+                "type": ["string", "null"],
+                "enum": ["none", "proficient", "expert", null]
+              }
+            }
+          }
+        },
+        "damageResistances": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "damageImmunities": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "damageVulnerabilities": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "conditionImmunities": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "senses": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "languages": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "challengeRating": {
+          "type": ["object", "null"],
+          "properties": {
+            "rating": {
+              "type": ["number", "null"],
+              "description": "CR value as number (e.g., 0.25 for 1/4, 0.5 for 1/2, 1, 2, etc.)"
+            },
+            "xp": {
+              "type": ["integer", "null"],
+              "minimum": 0
+            }
+          }
+        },
+        "traits": {
+          "type": ["array", "null"],
+          "description": "Special traits",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "actions": {
+          "type": ["array", "null"],
+          "description": "Actions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "bonusActions": {
+          "type": ["array", "null"],
+          "description": "Bonus actions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "reactions": {
+          "type": ["array", "null"],
+          "description": "Reactions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "legendaryActions": {
+          "type": ["array", "null"],
+          "description": "Legendary actions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "legendaryActionsIntro": {
+          "type": ["string", "null"],
+          "description": "Introductory text for legendary actions (e.g., 'The dragon can take 3 legendary actions...')"
+        },
+        "mythicActions": {
+          "type": ["array", "null"],
+          "description": "Mythic actions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        },
+        "lairActions": {
+          "type": ["array", "null"],
+          "description": "Lair actions",
+          "items": {
+            "$ref": "#/definitions/descriptionBlock"
+          }
+        }
+      }
+    },
+    "spells": {
+      "type": "array",
+      "description": "Array of spell objects (if monster has spells)",
+      "items": {
+        "$ref": "spell.schema.json"
+      }
+    },
+    "image": {
+      "type": ["object", "null"],
+      "description": "Monster image",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "alt": {
+          "type": "string"
+        }
+      }
+    },
+    "_debug": {
+      "type": "object",
+      "description": "Debug information (optional)",
+      "properties": {
+        "rawHtml": {
+          "type": "string",
+          "description": "Raw HTML of the stat block container"
+        },
+        "containerFound": {
+          "type": "boolean"
+        },
+        "detectedFormat": {
+          "type": "string",
+          "enum": ["mon-stat-block", "mon-stat-block-2024", "stat-block", "Basic-Text-Frame", "ddb-statblock", "monster-details"]
+        },
+        "selectors": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ability": {
+      "type": ["object", "null"],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        },
+        "modifier": {
+          "type": "integer"
+        },
+        "save": {
+          "type": ["object", "null"],
+          "properties": {
+            "bonus": {
+              "type": "integer"
+            },
+            "proficiency": {
+              "type": ["string", "null"],
+              "enum": ["none", "proficient", "expert", null]
+            }
+          }
+        }
+      }
+    },
+    "descriptionBlock": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
