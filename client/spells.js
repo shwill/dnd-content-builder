@@ -46,6 +46,11 @@ document.getElementById('classes').addEventListener('paste', function(e) {
   handlePasteSpellHeader(e);
 });
 
+// Paste listener for material components field (parse V, S, M and material description)
+document.getElementById('material').addEventListener('paste', function(e) {
+  handlePasteComponents(e);
+});
+
 // Keyboard shortcuts for markdown formatting
 const markdownFields = ['description', 'higherLevels'];
 markdownFields.forEach(fieldId => {
@@ -208,6 +213,35 @@ function handlePasteSpellHeader(event) {
   // Always set the classes field (that's where we pasted)
   const classesField = document.getElementById('classes');
   classesField.value = classes;
+}
+
+function handlePasteComponents(event) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text').trim();
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Check for V, S, M components
+  const hasVerbal = /\bV\b/i.test(pastedText);
+  const hasSomatic = /\bS\b/i.test(pastedText);
+  const hasMaterial = /\bM\b/i.test(pastedText);
+
+  // Set the checkboxes
+  document.getElementById('verbal').checked = hasVerbal;
+  document.getElementById('somatic').checked = hasSomatic;
+  document.getElementById('materialCheck').checked = hasMaterial;
+
+  // Extract material description from parentheses
+  let materialDescription = '';
+  const materialMatch = pastedText.match(/\(([^)]+)\)/);
+  if (materialMatch) {
+    materialDescription = materialMatch[1].trim();
+  }
+
+  // Set the material field
+  const materialField = document.getElementById('material');
+  materialField.value = materialDescription;
 }
 
 function handlePasteWithFormatting(event, fieldId, previewId) {
