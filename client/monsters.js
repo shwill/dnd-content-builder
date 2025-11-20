@@ -93,6 +93,9 @@ document.getElementById('addSkillBtn').addEventListener('click', addSkill);
 document.getElementById('addSenseBtn').addEventListener('click', addSense);
 document.getElementById('addLanguageBtn').addEventListener('click', addLanguage);
 
+// HP formula calculation
+document.getElementById('hpFormula').addEventListener('input', calculateAverageHP);
+
 // Helper functions
 function calcModifier(score) {
   if (!score) return 0;
@@ -101,6 +104,43 @@ function calcModifier(score) {
 
 function formatBonus(bonus) {
   return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+}
+
+function calculateAverageHP() {
+  const formula = document.getElementById('hpFormula').value.trim();
+  if (!formula) {
+    return;
+  }
+
+  // Dice averages
+  const diceAverages = {
+    4: 2.5,
+    6: 3.5,
+    8: 4.5,
+    10: 5.5,
+    12: 6.5,
+    20: 10.5
+  };
+
+  // Parse formula like "8d8+16" or "5d10-2" or just "3d6"
+  const match = formula.match(/^(\d+)d(\d+)(([+-]\d+))?$/i);
+
+  if (!match) {
+    // Invalid format, don't update
+    return;
+  }
+
+  const numDice = parseInt(match[1]);
+  const dieType = parseInt(match[2]);
+  const modifier = match[3] ? parseInt(match[3]) : 0;
+
+  if (!diceAverages[dieType]) {
+    // Unknown die type
+    return;
+  }
+
+  const average = Math.floor(numDice * diceAverages[dieType] + modifier);
+  document.getElementById('hp').value = average;
 }
 
 function updateAbilitiesAndSkills() {
@@ -383,8 +423,13 @@ async function editMonster(id) {
     // Combat stats
     document.getElementById('ac').value = monster.armor?.ac || '';
     document.getElementById('armorType').value = monster.armor?.type || '';
-    document.getElementById('hp').value = monster.hitPoints?.hp || '';
     document.getElementById('hpFormula').value = monster.hitPoints?.formula || '';
+    document.getElementById('hp').value = monster.hitPoints?.hp || '';
+
+    // Calculate HP if formula exists but HP doesn't
+    if (monster.hitPoints?.formula && !monster.hitPoints?.hp) {
+      calculateAverageHP();
+    }
 
     // Speed
     document.getElementById('speedWalk').value = monster.speed?.walk || '';
