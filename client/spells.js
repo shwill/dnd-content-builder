@@ -28,6 +28,14 @@ document.getElementById('higherLevels').addEventListener('input', function() {
   updateMarkdownPreview('higherLevels', 'higherLevelsPreview');
 });
 
+// Paste listeners for spell descriptions
+document.getElementById('description').addEventListener('paste', function(e) {
+  handlePasteWithFormatting(e, 'description', 'descriptionPreview');
+});
+document.getElementById('higherLevels').addEventListener('paste', function(e) {
+  handlePasteWithFormatting(e, 'higherLevels', 'higherLevelsPreview');
+});
+
 // Helper function for markdown preview
 function updateMarkdownPreview(textareaId, previewId) {
   const textarea = document.getElementById(textareaId);
@@ -41,6 +49,59 @@ function updateMarkdownPreview(textareaId, previewId) {
 
   // Use marked.js to convert markdown to HTML
   preview.innerHTML = marked.parse(text);
+}
+
+function cleanupLineBreaks(text) {
+  // Clean up line breaks from PDFs: preserve paragraph breaks (blank lines) but remove single line breaks
+  // Split by blank lines (one or more empty lines with possible whitespace)
+  const paragraphs = text.split(/(?:\r?\n\s*){2,}/);
+
+  // For each paragraph, replace single newlines with spaces and normalize whitespace
+  const cleanedParagraphs = paragraphs.map(para => {
+    return para.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+  }).filter(para => para.length > 0); // Remove empty paragraphs
+
+  // Join paragraphs back with double newlines
+  return cleanedParagraphs.join('\n\n');
+}
+
+function handlePasteWithFormatting(event, fieldId, previewId) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Clean up line breaks
+  pastedText = cleanupLineBreaks(pastedText);
+
+  // Auto-format common D&D patterns with markdown italics
+  // Attack Roll patterns
+  pastedText = pastedText.replace(/\b(Melee or Ranged Attack Roll):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Melee Attack Roll):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Ranged Attack Roll):/g, '_$1:_');
+
+  // Saving Throw patterns (all ability scores)
+  pastedText = pastedText.replace(/\b(Strength Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Dexterity Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Constitution Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Intelligence Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Wisdom Saving Throw):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Charisma Saving Throw):/g, '_$1:_');
+
+  // Common result patterns
+  pastedText = pastedText.replace(/\b(Hit):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Failure):/g, '_$1:_');
+  pastedText = pastedText.replace(/\b(Success):/g, '_$1:_');
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Set field content
+  const field = document.getElementById(fieldId);
+  field.value = pastedText;
+
+  // Trigger input event to update markdown preview
+  if (previewId) {
+    field.dispatchEvent(new Event('input'));
+  }
 }
 
 // Load all spells
