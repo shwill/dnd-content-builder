@@ -1353,6 +1353,9 @@ async function handleSubmit(e) {
     // Show a new monster form with the source pre-filled
     showNewMonsterForm();
     document.getElementById('source').value = savedSource;
+
+    // Scroll to top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
     console.error('Error saving monster:', error);
     alert('Error saving monster');

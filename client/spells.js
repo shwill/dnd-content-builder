@@ -939,6 +939,9 @@ async function handleSubmit(e) {
     // Show a new spell form with the source pre-filled
     showNewSpellForm();
     document.getElementById('source').value = savedSource;
+
+    // Scroll to top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
     console.error('Error saving spell:', error);
     alert('Error saving spell');
