@@ -128,9 +128,29 @@
             </div>
 
             <div class="form-group">
-              <label for="speed">Speed (JSON format)</label>
-              <input type="text" id="speed" placeholder='e.g., {"walk": 30, "fly": 60}'>
-              <small>Common: walk, fly, swim, burrow, climb</small>
+              <label>Speed (feet)</label>
+              <div class="speed-grid">
+                <div class="form-group">
+                  <label for="speedWalk">Walk</label>
+                  <input type="number" id="speedWalk" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedFly">Fly</label>
+                  <input type="number" id="speedFly" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedSwim">Swim</label>
+                  <input type="number" id="speedSwim" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedBurrow">Burrow</label>
+                  <input type="number" id="speedBurrow" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedClimb">Climb</label>
+                  <input type="number" id="speedClimb" min="0" step="5">
+                </div>
+              </div>
             </div>
 
             <div class="form-row">
@@ -176,17 +196,324 @@
           </div>
 
           <div class="form-section">
+            <h3>Saving Throws</h3>
+            <div class="saves-grid">
+              <div class="save-item">
+                <span class="save-label">STR Save: <span id="strSaveDisplay">+0</span></span>
+                <select id="strSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="save-item">
+                <span class="save-label">DEX Save: <span id="dexSaveDisplay">+0</span></span>
+                <select id="dexSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="save-item">
+                <span class="save-label">CON Save: <span id="conSaveDisplay">+0</span></span>
+                <select id="conSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="save-item">
+                <span class="save-label">INT Save: <span id="intSaveDisplay">+0</span></span>
+                <select id="intSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="save-item">
+                <span class="save-label">WIS Save: <span id="wisSaveDisplay">+0</span></span>
+                <select id="wisSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="save-item">
+                <span class="save-label">CHA Save: <span id="chaSaveDisplay">+0</span></span>
+                <select id="chaSaveProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group mt-20">
+              <label for="profBonus">Proficiency Bonus</label>
+              <input type="number" id="profBonus" min="0" value="2">
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Skills</h3>
+            <div class="skills-grid">
+              <div class="skill-item">
+                <span class="skill-label">Acrobatics (DEX): <span id="acrobaticsDisplay">+0</span></span>
+                <select id="acrobaticsProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Animal Handling (WIS): <span id="animalHandlingDisplay">+0</span></span>
+                <select id="animalHandlingProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Arcana (INT): <span id="arcanaDisplay">+0</span></span>
+                <select id="arcanaProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Athletics (STR): <span id="athleticsDisplay">+0</span></span>
+                <select id="athleticsProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Deception (CHA): <span id="deceptionDisplay">+0</span></span>
+                <select id="deceptionProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">History (INT): <span id="historyDisplay">+0</span></span>
+                <select id="historyProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Insight (WIS): <span id="insightDisplay">+0</span></span>
+                <select id="insightProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Intimidation (CHA): <span id="intimidationDisplay">+0</span></span>
+                <select id="intimidationProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Investigation (INT): <span id="investigationDisplay">+0</span></span>
+                <select id="investigationProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Medicine (WIS): <span id="medicineDisplay">+0</span></span>
+                <select id="medicineProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Nature (INT): <span id="natureDisplay">+0</span></span>
+                <select id="natureProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Perception (WIS): <span id="perceptionDisplay">+0</span></span>
+                <select id="perceptionProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Performance (CHA): <span id="performanceDisplay">+0</span></span>
+                <select id="performanceProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Persuasion (CHA): <span id="persuasionDisplay">+0</span></span>
+                <select id="persuasionProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Religion (INT): <span id="religionDisplay">+0</span></span>
+                <select id="religionProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Sleight of Hand (DEX): <span id="sleightOfHandDisplay">+0</span></span>
+                <select id="sleightOfHandProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Stealth (DEX): <span id="stealthDisplay">+0</span></span>
+                <select id="stealthProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div class="skill-item">
+                <span class="skill-label">Survival (WIS): <span id="survivalDisplay">+0</span></span>
+                <select id="survivalProf">
+                  <option value="none">None</option>
+                  <option value="proficient">Proficient</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Senses</h3>
+            <div class="sense-builder">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="senseType">Type</label>
+                  <select id="senseType">
+                    <option value="">Select type</option>
+                    <option value="blindsight">Blindsight</option>
+                    <option value="darkvision">Darkvision</option>
+                    <option value="tremorsense">Tremorsense</option>
+                    <option value="truesight">Truesight</option>
+                    <option value="passive Perception">Passive Perception</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="senseRange">Range/Value</label>
+                  <input type="number" id="senseRange" placeholder="e.g., 60">
+                </div>
+                <div class="form-group">
+                  <label for="senseQualifier">Qualifier (optional)</label>
+                  <input type="text" id="senseQualifier" placeholder="e.g., blind beyond this radius">
+                </div>
+                <div class="form-group">
+                  <label>&nbsp;</label>
+                  <button type="button" id="addSenseBtn" class="btn btn-success">Add Sense</button>
+                </div>
+              </div>
+            </div>
+            <div id="sensesList" class="tags-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Languages</h3>
+            <div class="language-builder">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="languageSelect">Language</label>
+                  <select id="languageSelect">
+                    <option value="">Select language</option>
+                    <option value="Aarakocra">Aarakocra</option>
+                    <option value="Abyssal">Abyssal</option>
+                    <option value="Aquan">Aquan</option>
+                    <option value="Auran">Auran</option>
+                    <option value="Celestial">Celestial</option>
+                    <option value="Common">Common</option>
+                    <option value="Deep Speech">Deep Speech</option>
+                    <option value="Draconic">Draconic</option>
+                    <option value="Druidic">Druidic</option>
+                    <option value="Dwarvish">Dwarvish</option>
+                    <option value="Elvish">Elvish</option>
+                    <option value="Giant">Giant</option>
+                    <option value="Gith">Gith</option>
+                    <option value="Gnomish">Gnomish</option>
+                    <option value="Goblin">Goblin</option>
+                    <option value="Halfling">Halfling</option>
+                    <option value="Ignan">Ignan</option>
+                    <option value="Infernal">Infernal</option>
+                    <option value="Kraul">Kraul</option>
+                    <option value="Merfolk">Merfolk</option>
+                    <option value="Orc">Orc</option>
+                    <option value="Primordial">Primordial</option>
+                    <option value="Sphinx">Sphinx</option>
+                    <option value="Sylvan">Sylvan</option>
+                    <option value="Terran">Terran</option>
+                    <option value="Thieves' cant">Thieves' cant</option>
+                    <option value="Undercommon">Undercommon</option>
+                    <option value="Telepathy">Telepathy</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="languageQualifier">Qualifier (optional)</label>
+                  <select id="languageQualifier">
+                    <option value="">None</option>
+                    <option value="understands but can't speak">understands but can't speak</option>
+                    <option value="can't speak">can't speak</option>
+                    <option value="doesn't speak">doesn't speak</option>
+                    <option value="can't speak in bear form">can't speak in bear form</option>
+                    <option value="can't speak in bat form">can't speak in bat form</option>
+                    <option value="can't speak in wolf form">can't speak in wolf form</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="telepathyRange">Telepathy Range (ft)</label>
+                  <select id="telepathyRange">
+                    <option value="">N/A</option>
+                    <option value="5">5 ft.</option>
+                    <option value="20">20 ft.</option>
+                    <option value="30">30 ft.</option>
+                    <option value="50">50 ft.</option>
+                    <option value="60">60 ft.</option>
+                    <option value="100">100 ft.</option>
+                    <option value="120">120 ft.</option>
+                    <option value="150">150 ft.</option>
+                    <option value="240">240 ft.</option>
+                    <option value="300">300 ft.</option>
+                    <option value="600">600 ft.</option>
+                    <option value="1000">1000 ft.</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>&nbsp;</label>
+                  <button type="button" id="addLanguageBtn" class="btn btn-success">Add Language</button>
+                </div>
+              </div>
+            </div>
+            <div id="languagesList" class="tags-list"></div>
+          </div>
+
+          <div class="form-section">
             <h3>Additional Details</h3>
-
-            <div class="form-group">
-              <label for="languages">Languages (comma-separated)</label>
-              <input type="text" id="languages" placeholder="e.g., Common, Draconic">
-            </div>
-
-            <div class="form-group">
-              <label for="senses">Senses (comma-separated)</label>
-              <input type="text" id="senses" placeholder="e.g., darkvision 60 ft., passive Perception 12">
-            </div>
 
             <div class="form-group">
               <label for="damageResistances">Damage Resistances (comma-separated)</label>

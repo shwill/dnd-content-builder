@@ -1,6 +1,8 @@
 const API_URL = 'http://localhost:3100/api';
 
 let currentMonsterId = null;
+let sensesList = [];
+let languagesList = [];
 
 // DOM Elements
 const monsterList = document.getElementById('monsterList');
@@ -11,6 +13,28 @@ const cancelBtn = document.getElementById('cancelBtn');
 const cancelBtnBottom = document.getElementById('cancelBtnBottom');
 const formTitle = document.getElementById('formTitle');
 
+// Skill to ability mapping
+const skillAbilities = {
+  acrobatics: 'dex',
+  animalHandling: 'wis',
+  arcana: 'int',
+  athletics: 'str',
+  deception: 'cha',
+  history: 'int',
+  insight: 'wis',
+  intimidation: 'cha',
+  investigation: 'int',
+  medicine: 'wis',
+  nature: 'int',
+  perception: 'wis',
+  performance: 'cha',
+  persuasion: 'cha',
+  religion: 'int',
+  sleightOfHand: 'dex',
+  stealth: 'dex',
+  survival: 'wis'
+};
+
 // Initialize
 loadMonsters();
 
@@ -19,6 +43,172 @@ newMonsterBtn.addEventListener('click', showNewMonsterForm);
 cancelBtn.addEventListener('click', hideForm);
 cancelBtnBottom.addEventListener('click', hideForm);
 form.addEventListener('submit', handleSubmit);
+
+// Ability score change listeners
+['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
+  document.getElementById(ability).addEventListener('input', updateSavesAndSkills);
+});
+document.getElementById('profBonus').addEventListener('input', updateSavesAndSkills);
+
+// Senses and languages
+document.getElementById('addSenseBtn').addEventListener('click', addSense);
+document.getElementById('addLanguageBtn').addEventListener('click', addLanguage);
+
+// Helper functions
+function calcModifier(score) {
+  if (!score) return 0;
+  return Math.floor((score - 10) / 2);
+}
+
+function formatBonus(bonus) {
+  return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+}
+
+function updateSavesAndSkills() {
+  const profBonus = parseInt(document.getElementById('profBonus').value) || 0;
+
+  // Update saves
+  const abilities = {
+    str: parseInt(document.getElementById('str').value) || 10,
+    dex: parseInt(document.getElementById('dex').value) || 10,
+    con: parseInt(document.getElementById('con').value) || 10,
+    int: parseInt(document.getElementById('int').value) || 10,
+    wis: parseInt(document.getElementById('wis').value) || 10,
+    cha: parseInt(document.getElementById('cha').value) || 10
+  };
+
+  // Update save displays
+  Object.keys(abilities).forEach(ability => {
+    const modifier = calcModifier(abilities[ability]);
+    const proficiency = document.getElementById(`${ability}SaveProf`).value;
+    let bonus = modifier;
+
+    if (proficiency === 'proficient') bonus += profBonus;
+    if (proficiency === 'expert') bonus += profBonus * 2;
+
+    document.getElementById(`${ability}SaveDisplay`).textContent = formatBonus(bonus);
+  });
+
+  // Update skill displays
+  Object.keys(skillAbilities).forEach(skill => {
+    const ability = skillAbilities[skill];
+    const modifier = calcModifier(abilities[ability]);
+    const proficiency = document.getElementById(`${skill}Prof`).value;
+    let bonus = modifier;
+
+    if (proficiency === 'proficient') bonus += profBonus;
+    if (proficiency === 'expert') bonus += profBonus * 2;
+
+    document.getElementById(`${skill}Display`).textContent = formatBonus(bonus);
+  });
+}
+
+// Add proficiency change listeners
+['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
+  document.getElementById(`${ability}SaveProf`).addEventListener('change', updateSavesAndSkills);
+});
+
+Object.keys(skillAbilities).forEach(skill => {
+  document.getElementById(`${skill}Prof`).addEventListener('change', updateSavesAndSkills);
+});
+
+// Senses management
+function addSense() {
+  const type = document.getElementById('senseType').value;
+  const range = document.getElementById('senseRange').value;
+  const qualifier = document.getElementById('senseQualifier').value;
+
+  if (!type || !range) {
+    alert('Please select a sense type and enter a range/value');
+    return;
+  }
+
+  let senseText = '';
+  if (type === 'passive Perception') {
+    senseText = `passive Perception ${range}`;
+  } else {
+    senseText = `${type} ${range} ft.`;
+    if (qualifier) {
+      senseText += ` (${qualifier})`;
+    }
+  }
+
+  sensesList.push(senseText);
+  renderSenses();
+
+  // Clear inputs
+  document.getElementById('senseType').value = '';
+  document.getElementById('senseRange').value = '';
+  document.getElementById('senseQualifier').value = '';
+}
+
+function removeSense(index) {
+  sensesList.splice(index, 1);
+  renderSenses();
+}
+
+function renderSenses() {
+  const container = document.getElementById('sensesList');
+  if (sensesList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No senses added</p>';
+    return;
+  }
+
+  container.innerHTML = sensesList.map((sense, index) => `
+    <div class="tag">
+      <span>${sense}</span>
+      <button type="button" onclick="removeSense(${index})">×</button>
+    </div>
+  `).join('');
+}
+
+// Languages management
+function addLanguage() {
+  const language = document.getElementById('languageSelect').value;
+  const qualifier = document.getElementById('languageQualifier').value;
+  const telepathyRange = document.getElementById('telepathyRange').value;
+
+  if (!language) {
+    alert('Please select a language');
+    return;
+  }
+
+  let languageText = language;
+
+  if (language === 'Telepathy' && telepathyRange) {
+    languageText = `Telepathy ${telepathyRange} ft.`;
+  } else if (qualifier) {
+    languageText += ` (${qualifier})`;
+  }
+
+  languagesList.push(languageText);
+  renderLanguages();
+
+  // Clear inputs
+  document.getElementById('languageSelect').value = '';
+  document.getElementById('languageQualifier').value = '';
+  document.getElementById('telepathyRange').value = '';
+}
+
+function removeLanguage(index) {
+  languagesList.splice(index, 1);
+  renderLanguages();
+}
+
+function renderLanguages() {
+  const container = document.getElementById('languagesList');
+  if (languagesList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No languages added</p>';
+    return;
+  }
+
+  container.innerHTML = languagesList.map((language, index) => `
+    <div class="tag">
+      <span>${language}</span>
+      <button type="button" onclick="removeLanguage(${index})">×</button>
+    </div>
+  `).join('');
+}
 
 // Load all monsters
 async function loadMonsters() {
@@ -55,6 +245,11 @@ function showNewMonsterForm() {
   currentMonsterId = null;
   formTitle.textContent = 'New Monster';
   form.reset();
+  sensesList = [];
+  languagesList = [];
+  renderSenses();
+  renderLanguages();
+  updateSavesAndSkills();
   monsterList.style.display = 'none';
   monsterForm.style.display = 'block';
 }
@@ -64,6 +259,8 @@ function hideForm() {
   monsterForm.style.display = 'none';
   monsterList.style.display = 'block';
   form.reset();
+  sensesList = [];
+  languagesList = [];
   currentMonsterId = null;
 }
 
@@ -89,9 +286,19 @@ async function editMonster(id) {
     document.getElementById('armorType').value = monster.armor?.type || '';
     document.getElementById('hp').value = monster.hitPoints?.hp || '';
     document.getElementById('hpFormula').value = monster.hitPoints?.formula || '';
-    document.getElementById('speed').value = monster.speed ? JSON.stringify(monster.speed) : '';
+
+    // Speed
+    document.getElementById('speedWalk').value = monster.speed?.walk || '';
+    document.getElementById('speedFly').value = monster.speed?.fly || '';
+    document.getElementById('speedSwim').value = monster.speed?.swim || '';
+    document.getElementById('speedBurrow').value = monster.speed?.burrow || '';
+    document.getElementById('speedClimb').value = monster.speed?.climb || '';
+
     document.getElementById('cr').value = monster.challengeRating?.rating || '';
     document.getElementById('xp').value = monster.challengeRating?.xp || '';
+
+    // Proficiency bonus
+    document.getElementById('profBonus').value = monster.proficiencyBonus || 2;
 
     // Abilities
     document.getElementById('str').value = monster.abilities?.strength?.score || '';
@@ -101,9 +308,46 @@ async function editMonster(id) {
     document.getElementById('wis').value = monster.abilities?.wisdom?.score || '';
     document.getElementById('cha').value = monster.abilities?.charisma?.score || '';
 
+    // Load saves
+    const abilityMap = {
+      str: 'strength',
+      dex: 'dexterity',
+      con: 'constitution',
+      int: 'intelligence',
+      wis: 'wisdom',
+      cha: 'charisma'
+    };
+
+    Object.keys(abilityMap).forEach(short => {
+      const fullName = abilityMap[short];
+      const saveData = monster.abilities?.[fullName]?.save;
+      if (saveData && saveData.proficiency) {
+        document.getElementById(`${short}SaveProf`).value = saveData.proficiency;
+      }
+    });
+
+    // Load skills
+    if (monster.skills) {
+      Object.keys(monster.skills).forEach(skillName => {
+        const skill = monster.skills[skillName];
+        if (skill.proficiency) {
+          document.getElementById(`${skillName}Prof`).value = skill.proficiency;
+        }
+      });
+    }
+
+    // Update displays
+    updateSavesAndSkills();
+
+    // Senses
+    sensesList = monster.senses || [];
+    renderSenses();
+
+    // Languages
+    languagesList = monster.languages || [];
+    renderLanguages();
+
     // Additional details
-    document.getElementById('languages').value = monster.languages?.join(', ') || '';
-    document.getElementById('senses').value = monster.senses?.join(', ') || '';
     document.getElementById('damageResistances').value = monster.damageResistances?.join(', ') || '';
     document.getElementById('damageImmunities').value = monster.damageImmunities?.join(', ') || '';
     document.getElementById('conditionImmunities').value = monster.conditionImmunities?.join(', ') || '';
@@ -146,22 +390,19 @@ async function duplicateMonster(id) {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const calcModifier = (score) => {
-    if (!score) return null;
-    return Math.floor((score - 10) / 2);
-  };
+  // Build speed object
+  const speed = {};
+  const walkSpeed = parseInt(document.getElementById('speedWalk').value);
+  const flySpeed = parseInt(document.getElementById('speedFly').value);
+  const swimSpeed = parseInt(document.getElementById('speedSwim').value);
+  const burrowSpeed = parseInt(document.getElementById('speedBurrow').value);
+  const climbSpeed = parseInt(document.getElementById('speedClimb').value);
 
-  // Parse speed JSON
-  let speed = null;
-  const speedValue = document.getElementById('speed').value.trim();
-  if (speedValue) {
-    try {
-      speed = JSON.parse(speedValue);
-    } catch (e) {
-      alert('Invalid speed format. Use JSON like {"walk": 30, "fly": 60}');
-      return;
-    }
-  }
+  if (walkSpeed) speed.walk = walkSpeed;
+  if (flySpeed) speed.fly = flySpeed;
+  if (swimSpeed) speed.swim = swimSpeed;
+  if (burrowSpeed) speed.burrow = burrowSpeed;
+  if (climbSpeed) speed.climb = climbSpeed;
 
   // Build monster data
   const str = parseInt(document.getElementById('str').value) || null;
@@ -170,6 +411,59 @@ async function handleSubmit(e) {
   const int = parseInt(document.getElementById('int').value) || null;
   const wis = parseInt(document.getElementById('wis').value) || null;
   const cha = parseInt(document.getElementById('cha').value) || null;
+  const profBonus = parseInt(document.getElementById('profBonus').value) || 2;
+
+  // Build abilities with saves
+  const abilityMap = {
+    str: { name: 'strength', score: str },
+    dex: { name: 'dexterity', score: dex },
+    con: { name: 'constitution', score: con },
+    int: { name: 'intelligence', score: int },
+    wis: { name: 'wisdom', score: wis },
+    cha: { name: 'charisma', score: cha }
+  };
+
+  const abilities = {};
+  Object.keys(abilityMap).forEach(short => {
+    const { name, score } = abilityMap[short];
+    if (score) {
+      const modifier = calcModifier(score);
+      const saveProf = document.getElementById(`${short}SaveProf`).value;
+      let saveBonus = modifier;
+
+      if (saveProf === 'proficient') saveBonus += profBonus;
+      if (saveProf === 'expert') saveBonus += profBonus * 2;
+
+      abilities[name] = {
+        score,
+        modifier,
+        save: saveProf !== 'none' ? {
+          bonus: saveBonus,
+          proficiency: saveProf
+        } : null
+      };
+    }
+  });
+
+  // Build skills
+  const skills = {};
+  Object.keys(skillAbilities).forEach(skill => {
+    const proficiency = document.getElementById(`${skill}Prof`).value;
+    if (proficiency !== 'none') {
+      const ability = skillAbilities[skill];
+      const abilityScore = parseInt(document.getElementById(ability).value) || 10;
+      const modifier = calcModifier(abilityScore);
+      let bonus = modifier;
+
+      if (proficiency === 'proficient') bonus += profBonus;
+      if (proficiency === 'expert') bonus += profBonus * 2;
+
+      skills[skill] = {
+        bonus,
+        proficiency
+      };
+    }
+  });
 
   const monsterData = {
     monster: {
@@ -186,18 +480,11 @@ async function handleSubmit(e) {
         hp: parseInt(document.getElementById('hp').value) || null,
         formula: document.getElementById('hpFormula').value || null
       },
-      speed,
-      proficiencyBonus: null,
+      speed: Object.keys(speed).length > 0 ? speed : null,
+      proficiencyBonus: profBonus,
       initiative: dex ? calcModifier(dex) : null,
-      abilities: {
-        strength: str ? { score: str, modifier: calcModifier(str) } : null,
-        dexterity: dex ? { score: dex, modifier: calcModifier(dex) } : null,
-        constitution: con ? { score: con, modifier: calcModifier(con) } : null,
-        intelligence: int ? { score: int, modifier: calcModifier(int) } : null,
-        wisdom: wis ? { score: wis, modifier: calcModifier(wis) } : null,
-        charisma: cha ? { score: cha, modifier: calcModifier(cha) } : null
-      },
-      skills: null,
+      abilities: Object.keys(abilities).length > 0 ? abilities : null,
+      skills: Object.keys(skills).length > 0 ? skills : null,
       damageResistances: document.getElementById('damageResistances').value
         ? document.getElementById('damageResistances').value.split(',').map(s => s.trim())
         : null,
@@ -208,12 +495,8 @@ async function handleSubmit(e) {
       conditionImmunities: document.getElementById('conditionImmunities').value
         ? document.getElementById('conditionImmunities').value.split(',').map(s => s.trim())
         : null,
-      senses: document.getElementById('senses').value
-        ? document.getElementById('senses').value.split(',').map(s => s.trim())
-        : null,
-      languages: document.getElementById('languages').value
-        ? document.getElementById('languages').value.split(',').map(s => s.trim())
-        : null,
+      senses: sensesList.length > 0 ? sensesList : null,
+      languages: languagesList.length > 0 ? languagesList : null,
       challengeRating: {
         rating: parseFloat(document.getElementById('cr').value) || null,
         xp: parseInt(document.getElementById('xp').value) || null
@@ -262,3 +545,5 @@ async function handleSubmit(e) {
 window.editMonster = editMonster;
 window.deleteMonster = deleteMonster;
 window.duplicateMonster = duplicateMonster;
+window.removeSense = removeSense;
+window.removeLanguage = removeLanguage;

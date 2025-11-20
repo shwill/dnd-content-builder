@@ -278,6 +278,76 @@ header p {
   gap: 15px;
 }
 
+.speed-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.saves-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.save-item, .skill-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.save-label, .skill-label {
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.save-label span, .skill-label span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+  min-height: 40px;
+  padding: 10px;
+  background: var(--background);
+  border-radius: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+  padding: 0;
+}
+
+.tag button:hover {
+  color: var(--primary-dark);
+}
+
 .checkbox-group {
   display: flex;
   gap: 20px;
@@ -313,6 +383,18 @@ header p {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .speed-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .saves-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
   .content-item {
     flex-direction: column;
     align-items: flex-start;
@@ -334,6 +416,14 @@ header p {
 @media (max-width: 480px) {
   .ability-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .speed-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .saves-grid {
+    grid-template-columns: 1fr;
   }
 }
 
