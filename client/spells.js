@@ -474,9 +474,18 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
   // Prevent default paste behavior
   event.preventDefault();
 
-  // Set field content
+  // Insert at cursor position instead of replacing entire content
   const field = document.getElementById(fieldId);
-  field.value = pastedText;
+  const start = field.selectionStart;
+  const end = field.selectionEnd;
+  const currentValue = field.value;
+
+  // Insert the formatted text at cursor position
+  field.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+
+  // Set cursor position after the inserted text
+  const newCursorPos = start + pastedText.length;
+  field.setSelectionRange(newCursorPos, newCursorPos);
 
   // Trigger input event to update markdown preview
   if (previewId) {
