@@ -41,6 +41,11 @@ document.getElementById('name').addEventListener('paste', function(e) {
   handlePasteTitleCase(e, 'name');
 });
 
+// Paste listener for classes field (parse level, school, and classes)
+document.getElementById('classes').addEventListener('paste', function(e) {
+  handlePasteSpellHeader(e);
+});
+
 // Keyboard shortcuts for markdown formatting
 const markdownFields = ['description', 'higherLevels'];
 markdownFields.forEach(fieldId => {
@@ -129,6 +134,66 @@ function handlePasteTitleCase(event, fieldId) {
   // Set field content
   const field = document.getElementById(fieldId);
   field.value = pastedText;
+}
+
+function handlePasteSpellHeader(event) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text').trim();
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Extract classes from parentheses
+  let classes = '';
+  const classesMatch = pastedText.match(/\(([^)]+)\)/);
+  if (classesMatch) {
+    classes = classesMatch[1].trim();
+    // Remove the parentheses part from the text for further parsing
+    pastedText = pastedText.replace(/\s*\([^)]+\)/, '').trim();
+  }
+
+  // Parse level and school
+  let level = '';
+  let school = '';
+
+  // Check for "Cantrip" pattern: "School Cantrip"
+  if (/\bcantrip\b/i.test(pastedText)) {
+    level = '0';
+    // School is the word before "Cantrip"
+    const cantripMatch = pastedText.match(/^(\w+)\s+cantrip/i);
+    if (cantripMatch) {
+      school = cantripMatch[1].toLowerCase();
+    }
+  }
+  // Check for "Nth-level School" pattern
+  else {
+    const levelMatch = pastedText.match(/^(\d+)(st|nd|rd|th)-level\s+(\w+)/i);
+    if (levelMatch) {
+      level = levelMatch[1];
+      school = levelMatch[3].toLowerCase();
+    } else {
+      // If no level specified, try to extract just the school
+      const schoolMatch = pastedText.match(/^(\w+)/);
+      if (schoolMatch) {
+        school = schoolMatch[1].toLowerCase();
+      }
+    }
+  }
+
+  // Set the fields (only if not already set)
+  const levelField = document.getElementById('level');
+  if (level && !levelField.value) {
+    levelField.value = level;
+  }
+
+  const schoolField = document.getElementById('school');
+  if (school && !schoolField.value) {
+    schoolField.value = school;
+  }
+
+  // Always set the classes field (that's where we pasted)
+  const classesField = document.getElementById('classes');
+  classesField.value = classes;
 }
 
 function handlePasteWithFormatting(event, fieldId, previewId) {
