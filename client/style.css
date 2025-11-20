@@ -272,6 +272,23 @@ header p {
   gap: 20px;
 }
 
+.builder-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.builder-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.builder-btn {
+  margin-bottom: 0;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
 .ability-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -469,6 +486,18 @@ header p {
 @media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .builder-row {
+    flex-wrap: wrap;
+  }
+
+  .builder-row .form-group {
+    min-width: 120px;
+  }
+
+  .builder-btn {
+    flex: 1 1 100%;
   }
 
   .ability-grid {

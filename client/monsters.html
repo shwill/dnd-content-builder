@@ -171,6 +171,16 @@
               <label for="profBonus">Proficiency Bonus</label>
               <input type="number" id="profBonus" min="0" value="2" style="width: 100px;">
             </div>
+
+            <div class="form-group mb-20">
+              <label>Initiative (based on DEX)</label>
+              <div class="ability-save" id="initiativeSave" data-prof="none" title="Click to toggle proficiency" style="display: inline-flex; cursor: pointer; padding: 8px 16px; border-radius: 4px;">
+                <span class="save-label" style="margin-right: 8px;">INITIATIVE:</span>
+                <span id="initiativeDisplay" class="save-value" style="font-size: 1.1em;">+0</span>
+              </div>
+              <p class="help-text">Click to toggle: None → Proficient → Expert</p>
+            </div>
+
             <div class="ability-sheet-grid">
               <div class="ability-block">
                 <div class="ability-name">Str</div>
@@ -268,7 +278,7 @@
           <div class="form-section">
             <h3>Skills</h3>
             <div class="skill-builder">
-              <div class="form-row">
+              <div class="builder-row">
                 <div class="form-group">
                   <label for="skillSelect">Skill</label>
                   <select id="skillSelect">
@@ -300,10 +310,7 @@
                     <option value="expert">Expert</option>
                   </select>
                 </div>
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" id="addSkillBtn" class="btn btn-success">Add Skill</button>
-                </div>
+                <button type="button" id="addSkillBtn" class="btn btn-success builder-btn">Add</button>
               </div>
             </div>
             <div id="skillsList" class="tags-list"></div>
@@ -312,7 +319,7 @@
           <div class="form-section">
             <h3>Senses</h3>
             <div class="sense-builder">
-              <div class="form-row">
+              <div class="builder-row">
                 <div class="form-group">
                   <label for="senseType">Type</label>
                   <select id="senseType">
@@ -330,12 +337,9 @@
                 </div>
                 <div class="form-group">
                   <label for="senseQualifier">Qualifier (optional)</label>
-                  <input type="text" id="senseQualifier" placeholder="e.g., blind beyond this radius">
+                  <input type="text" id="senseQualifier" placeholder="e.g., blind beyond">
                 </div>
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" id="addSenseBtn" class="btn btn-success">Add Sense</button>
-                </div>
+                <button type="button" id="addSenseBtn" class="btn btn-success builder-btn">Add</button>
               </div>
             </div>
             <div id="sensesList" class="tags-list"></div>
@@ -344,7 +348,7 @@
           <div class="form-section">
             <h3>Languages</h3>
             <div class="language-builder">
-              <div class="form-row">
+              <div class="builder-row">
                 <div class="form-group">
                   <label for="languageSelect">Language</label>
                   <select id="languageSelect">
@@ -392,7 +396,7 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="telepathyRange">Telepathy Range (ft)</label>
+                  <label for="telepathyRange">Telepathy Range</label>
                   <select id="telepathyRange">
                     <option value="">N/A</option>
                     <option value="5">5 ft.</option>
@@ -409,10 +413,7 @@
                     <option value="1000">1000 ft.</option>
                   </select>
                 </div>
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" id="addLanguageBtn" class="btn btn-success">Add Language</button>
-                </div>
+                <button type="button" id="addLanguageBtn" class="btn btn-success builder-btn">Add</button>
               </div>
             </div>
             <div id="languagesList" class="tags-list"></div>

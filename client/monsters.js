@@ -88,6 +88,19 @@ document.getElementById('profBonus').addEventListener('input', updateAbilitiesAn
   });
 });
 
+// Initiative click listener (toggle proficiency)
+document.getElementById('initiativeSave').addEventListener('click', function() {
+  const current = this.getAttribute('data-prof');
+  let next;
+
+  if (current === 'none') next = 'proficient';
+  else if (current === 'proficient') next = 'expert';
+  else next = 'none';
+
+  this.setAttribute('data-prof', next);
+  updateAbilitiesAndSkills();
+});
+
 // Skills, senses and languages
 document.getElementById('addSkillBtn').addEventListener('click', addSkill);
 document.getElementById('addSenseBtn').addEventListener('click', addSense);
@@ -225,6 +238,16 @@ function updateAbilitiesAndSkills() {
 
     document.getElementById(`${ability}SaveDisplay`).textContent = formatBonus(saveBonus);
   });
+
+  // Update initiative (based on DEX)
+  const dexModifier = calcModifier(abilities.dex);
+  const initiativeProficiency = document.getElementById('initiativeSave').getAttribute('data-prof');
+  let initiativeBonus = dexModifier;
+
+  if (initiativeProficiency === 'proficient') initiativeBonus += profBonus;
+  if (initiativeProficiency === 'expert') initiativeBonus += profBonus * 2;
+
+  document.getElementById('initiativeDisplay').textContent = formatBonus(initiativeBonus);
 
   // Re-render skills with updated bonuses
   renderSkills();
@@ -436,6 +459,9 @@ function showNewMonsterForm() {
     document.getElementById(`${ability}Save`).setAttribute('data-prof', 'none');
   });
 
+  // Reset initiative proficiency
+  document.getElementById('initiativeSave').setAttribute('data-prof', 'none');
+
   renderSkills();
   renderSenses();
   renderLanguages();
@@ -527,6 +553,12 @@ async function editMonster(id) {
         document.getElementById(`${short}Save`).setAttribute('data-prof', saveData.proficiency);
       }
     });
+
+    // Load initiative proficiency
+    document.getElementById('initiativeSave').setAttribute('data-prof', 'none');
+    if (monster.initiative?.proficiency) {
+      document.getElementById('initiativeSave').setAttribute('data-prof', monster.initiative.proficiency);
+    }
 
     // Load skills
     skillsList = [];
@@ -666,6 +698,18 @@ async function handleSubmit(e) {
     };
   });
 
+  // Build initiative (based on DEX)
+  const initiativeProficiency = document.getElementById('initiativeSave').getAttribute('data-prof');
+  let initiativeBonus = calcModifier(dex || 10);
+
+  if (initiativeProficiency === 'proficient') initiativeBonus += profBonus;
+  if (initiativeProficiency === 'expert') initiativeBonus += profBonus * 2;
+
+  const initiative = initiativeProficiency !== 'none' ? {
+    bonus: initiativeBonus,
+    proficiency: initiativeProficiency
+  } : null;
+
   const monsterData = {
     monster: {
       name: document.getElementById('name').value,
@@ -683,7 +727,7 @@ async function handleSubmit(e) {
       },
       speed: Object.keys(speed).length > 0 ? speed : null,
       proficiencyBonus: profBonus,
-      initiative: dex ? calcModifier(dex) : null,
+      initiative: initiative,
       abilities: Object.keys(abilities).length > 0 ? abilities : null,
       skills: Object.keys(skills).length > 0 ? skills : null,
       damageResistances: document.getElementById('damageResistances').value
