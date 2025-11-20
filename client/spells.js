@@ -150,12 +150,25 @@ function updateMarkdownPreview(textareaId, previewId) {
 
 function cleanupLineBreaks(text) {
   // Clean up line breaks from PDFs: preserve paragraph breaks (blank lines) but remove single line breaks
+  // Special handling for markdown tables which need line breaks preserved
+
   // Split by blank lines (one or more empty lines with possible whitespace)
   const paragraphs = text.split(/(?:\r?\n\s*){2,}/);
 
-  // For each paragraph, replace single newlines with spaces and normalize whitespace
+  // For each paragraph, check if it contains a markdown table
   const cleanedParagraphs = paragraphs.map(para => {
-    return para.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+    const lines = para.split(/\r?\n/);
+
+    // Check if this paragraph contains markdown table lines (lines starting with |)
+    const hasTableLines = lines.some(line => line.trim().startsWith('|'));
+
+    if (hasTableLines) {
+      // Preserve line breaks for tables, just trim each line
+      return lines.map(line => line.trim()).join('\n');
+    } else {
+      // Regular paragraph: replace single newlines with spaces and normalize whitespace
+      return para.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+    }
   }).filter(para => para.length > 0); // Remove empty paragraphs
 
   // Join paragraphs back with double newlines
