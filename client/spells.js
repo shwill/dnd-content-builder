@@ -138,6 +138,11 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
   // Clean up line breaks
   pastedText = cleanupLineBreaks(pastedText);
 
+  // Auto-detect and populate spell fields based on description (only for description field)
+  if (fieldId === 'description') {
+    autoDetectSpellProperties(pastedText);
+  }
+
   // Auto-format common D&D patterns with markdown italics
   // Attack Roll patterns
   pastedText = pastedText.replace(/\b(Melee or Ranged Attack Roll):/g, '_$1:_');
@@ -167,6 +172,56 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
   // Trigger input event to update markdown preview
   if (previewId) {
     field.dispatchEvent(new Event('input'));
+  }
+}
+
+function autoDetectSpellProperties(text) {
+  const lowerText = text.toLowerCase();
+
+  // Detect attack type (only if not already set)
+  const attackField = document.getElementById('attack');
+  if (!attackField.value) {
+    if (lowerText.includes('ranged spell attack')) {
+      attackField.value = 'Ranged';
+    } else if (lowerText.includes('melee spell attack')) {
+      attackField.value = 'Melee';
+    }
+  }
+
+  // Detect saving throw (only if not already set)
+  const saveField = document.getElementById('save');
+  if (!saveField.value) {
+    const abilities = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
+    for (const ability of abilities) {
+      const pattern = new RegExp(`\\b${ability.toLowerCase()} sav(e|ing throw)`, 'i');
+      if (pattern.test(lowerText)) {
+        saveField.value = ability;
+        break;
+      }
+    }
+  }
+
+  // Detect damage types (only if not already set)
+  const damageTypeField = document.getElementById('damageType');
+  if (!damageTypeField.value) {
+    const damageTypes = [
+      'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning',
+      'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder'
+    ];
+    const detectedTypes = new Set();
+
+    // Look for patterns like "Xd[Y] [damage type] damage" or just "[damage type] damage"
+    for (const damageType of damageTypes) {
+      const pattern = new RegExp(`(\\d+d\\d+\\s+)?${damageType}\\s+damage`, 'i');
+      if (pattern.test(lowerText)) {
+        detectedTypes.add(damageType);
+      }
+    }
+
+    // Set the detected damage types
+    if (detectedTypes.size > 0) {
+      damageTypeField.value = Array.from(detectedTypes).join(', ');
+    }
   }
 }
 
