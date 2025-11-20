@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monster Builder - D&D Content Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div>
+          <h1>Monster Builder</h1>
+          <a href="index.html" class="breadcrumb">← Back to Home</a>
+        </div>
+        <button id="newMonsterBtn" class="btn btn-primary">+ New Monster</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Monster List -->
+      <div id="monsterList" class="content-list"></div>
+
+      <!-- Monster Form (hidden by default) -->
+      <div id="monsterForm" class="form-panel" style="display: none;">
+        <div class="form-header">
+          <h2 id="formTitle">New Monster</h2>
+          <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+
+        <form id="monster-form">
+          <input type="hidden" id="monsterId">
+
+          <div class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input type="text" id="name" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="size">Size</label>
+                <select id="size">
+                  <option value="">Select size</option>
+                  <option value="Tiny">Tiny</option>
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                  <option value="Huge">Huge</option>
+                  <option value="Gargantuan">Gargantuan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="type">Type</label>
+                <select id="type">
+                  <option value="">Select type</option>
+                  <option value="Aberration">Aberration</option>
+                  <option value="Beast">Beast</option>
+                  <option value="Celestial">Celestial</option>
+                  <option value="Construct">Construct</option>
+                  <option value="Dragon">Dragon</option>
+                  <option value="Elemental">Elemental</option>
+                  <option value="Fey">Fey</option>
+                  <option value="Fiend">Fiend</option>
+                  <option value="Giant">Giant</option>
+                  <option value="Humanoid">Humanoid</option>
+                  <option value="Monstrosity">Monstrosity</option>
+                  <option value="Ooze">Ooze</option>
+                  <option value="Plant">Plant</option>
+                  <option value="Undead">Undead</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="subType">Subtype</label>
+                <input type="text" id="subType" placeholder="e.g., Goblinoid, Elf">
+              </div>
+
+              <div class="form-group">
+                <label for="alignment">Alignment</label>
+                <select id="alignment">
+                  <option value="">Select alignment</option>
+                  <option value="Lawful Good">Lawful Good</option>
+                  <option value="Neutral Good">Neutral Good</option>
+                  <option value="Chaotic Good">Chaotic Good</option>
+                  <option value="Lawful Neutral">Lawful Neutral</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Chaotic Neutral">Chaotic Neutral</option>
+                  <option value="Lawful Evil">Lawful Evil</option>
+                  <option value="Neutral Evil">Neutral Evil</option>
+                  <option value="Chaotic Evil">Chaotic Evil</option>
+                  <option value="Unaligned">Unaligned</option>
+                  <option value="Any">Any Alignment</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Combat Stats</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ac">Armor Class</label>
+                <input type="number" id="ac" min="1">
+              </div>
+              <div class="form-group">
+                <label for="armorType">Armor Type</label>
+                <input type="text" id="armorType" placeholder="e.g., natural armor">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="hp">Hit Points</label>
+                <input type="number" id="hp" min="1">
+              </div>
+              <div class="form-group">
+                <label for="hpFormula">HP Formula</label>
+                <input type="text" id="hpFormula" placeholder="e.g., 8d8+16">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="speed">Speed (JSON format)</label>
+              <input type="text" id="speed" placeholder='e.g., {"walk": 30, "fly": 60}'>
+              <small>Common: walk, fly, swim, burrow, climb</small>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cr">Challenge Rating</label>
+                <input type="number" id="cr" step="0.25" min="0" placeholder="e.g., 0.5, 1, 2">
+              </div>
+              <div class="form-group">
+                <label for="xp">XP</label>
+                <input type="number" id="xp" min="0">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Ability Scores</h3>
+            <div class="ability-grid">
+              <div class="form-group">
+                <label for="str">STR</label>
+                <input type="number" id="str" min="1" max="30">
+              </div>
+              <div class="form-group">
+                <label for="dex">DEX</label>
+                <input type="number" id="dex" min="1" max="30">
+              </div>
+              <div class="form-group">
+                <label for="con">CON</label>
+                <input type="number" id="con" min="1" max="30">
+              </div>
+              <div class="form-group">
+                <label for="int">INT</label>
+                <input type="number" id="int" min="1" max="30">
+              </div>
+              <div class="form-group">
+                <label for="wis">WIS</label>
+                <input type="number" id="wis" min="1" max="30">
+              </div>
+              <div class="form-group">
+                <label for="cha">CHA</label>
+                <input type="number" id="cha" min="1" max="30">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Additional Details</h3>
+
+            <div class="form-group">
+              <label for="languages">Languages (comma-separated)</label>
+              <input type="text" id="languages" placeholder="e.g., Common, Draconic">
+            </div>
+
+            <div class="form-group">
+              <label for="senses">Senses (comma-separated)</label>
+              <input type="text" id="senses" placeholder="e.g., darkvision 60 ft., passive Perception 12">
+            </div>
+
+            <div class="form-group">
+              <label for="damageResistances">Damage Resistances (comma-separated)</label>
+              <input type="text" id="damageResistances" placeholder="e.g., fire, cold">
+            </div>
+
+            <div class="form-group">
+              <label for="damageImmunities">Damage Immunities (comma-separated)</label>
+              <input type="text" id="damageImmunities" placeholder="e.g., poison, psychic">
+            </div>
+
+            <div class="form-group">
+              <label for="conditionImmunities">Condition Immunities (comma-separated)</label>
+              <input type="text" id="conditionImmunities" placeholder="e.g., charmed, frightened">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Monster</button>
+            <button type="button" id="cancelBtnBottom" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="monsters.js"></script>
+</body>
+</html>

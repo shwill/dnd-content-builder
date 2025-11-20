@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spell Builder - D&D Content Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div>
+          <h1>Spell Builder</h1>
+          <a href="index.html" class="breadcrumb">← Back to Home</a>
+        </div>
+        <button id="newSpellBtn" class="btn btn-primary">+ New Spell</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Spell List -->
+      <div id="spellList" class="content-list"></div>
+
+      <!-- Spell Form (hidden by default) -->
+      <div id="spellForm" class="form-panel" style="display: none;">
+        <div class="form-header">
+          <h2 id="formTitle">New Spell</h2>
+          <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+
+        <form id="spell-form">
+          <input type="hidden" id="spellId">
+
+          <div class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input type="text" id="name" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="level">Level</label>
+                <select id="level">
+                  <option value="">Select level</option>
+                  <option value="0">Cantrip (0)</option>
+                  <option value="1">1st Level</option>
+                  <option value="2">2nd Level</option>
+                  <option value="3">3rd Level</option>
+                  <option value="4">4th Level</option>
+                  <option value="5">5th Level</option>
+                  <option value="6">6th Level</option>
+                  <option value="7">7th Level</option>
+                  <option value="8">8th Level</option>
+                  <option value="9">9th Level</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="school">School of Magic</label>
+                <select id="school">
+                  <option value="">Select school</option>
+                  <option value="abjuration">Abjuration</option>
+                  <option value="conjuration">Conjuration</option>
+                  <option value="divination">Divination</option>
+                  <option value="enchantment">Enchantment</option>
+                  <option value="evocation">Evocation</option>
+                  <option value="illusion">Illusion</option>
+                  <option value="necromancy">Necromancy</option>
+                  <option value="transmutation">Transmutation</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="classes">Classes (comma-separated)</label>
+              <input type="text" id="classes" placeholder="e.g., Wizard, Sorcerer, Cleric">
+              <small>Common: Artificer, Bard, Cleric, Druid, Paladin, Ranger, Sorcerer, Warlock, Wizard</small>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Casting Details</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="castingTime">Casting Time</label>
+                <select id="castingTime">
+                  <option value="">Select casting time</option>
+                  <option value="1 action">1 Action</option>
+                  <option value="1 bonus action">1 Bonus Action</option>
+                  <option value="1 reaction">1 Reaction</option>
+                  <option value="1 minute">1 Minute</option>
+                  <option value="10 minutes">10 Minutes</option>
+                  <option value="1 hour">1 Hour</option>
+                  <option value="8 hours">8 Hours</option>
+                  <option value="12 hours">12 Hours</option>
+                  <option value="24 hours">24 Hours</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="reactionTrigger">Reaction Trigger (if applicable)</label>
+                <input type="text" id="reactionTrigger" placeholder="e.g., which you take when you are hit by an attack">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="range">Range</label>
+                <input type="text" id="range" placeholder="e.g., 60 feet, Self, Touch">
+              </div>
+
+              <div class="form-group">
+                <label for="duration">Duration</label>
+                <select id="duration">
+                  <option value="">Select duration</option>
+                  <option value="Instantaneous">Instantaneous</option>
+                  <option value="1 round">1 Round</option>
+                  <option value="Concentration, up to 1 minute">Concentration, up to 1 minute</option>
+                  <option value="Concentration, up to 10 minutes">Concentration, up to 10 minutes</option>
+                  <option value="Concentration, up to 1 hour">Concentration, up to 1 hour</option>
+                  <option value="Concentration, up to 8 hours">Concentration, up to 8 hours</option>
+                  <option value="1 minute">1 Minute</option>
+                  <option value="10 minutes">10 Minutes</option>
+                  <option value="1 hour">1 Hour</option>
+                  <option value="8 hours">8 Hours</option>
+                  <option value="24 hours">24 Hours</option>
+                  <option value="Until dispelled">Until Dispelled</option>
+                  <option value="Special">Special</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <h4>Components</h4>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="verbal"> Verbal (V)
+                </label>
+                <label>
+                  <input type="checkbox" id="somatic"> Somatic (S)
+                </label>
+                <label>
+                  <input type="checkbox" id="materialCheck"> Material (M)
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="material">Material Components (if any)</label>
+              <input type="text" id="material" placeholder="e.g., a tiny ball of bat guano and sulfur">
+            </div>
+
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="concentration"> Requires Concentration
+              </label>
+              <label>
+                <input type="checkbox" id="ritual"> Can be cast as Ritual
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Spell Effects</h3>
+
+            <div class="form-group">
+              <label for="description">Description *</label>
+              <textarea id="description" rows="6" required placeholder="Describe what the spell does..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="higherLevels">At Higher Levels</label>
+              <textarea id="higherLevels" rows="3" placeholder="Describe how the spell changes when cast at higher levels..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="attack">Attack Type</label>
+                <select id="attack">
+                  <option value="">None</option>
+                  <option value="Melee">Melee Spell Attack</option>
+                  <option value="Ranged">Ranged Spell Attack</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="save">Saving Throw</label>
+                <select id="save">
+                  <option value="">None</option>
+                  <option value="Strength">Strength</option>
+                  <option value="Dexterity">Dexterity</option>
+                  <option value="Constitution">Constitution</option>
+                  <option value="Intelligence">Intelligence</option>
+                  <option value="Wisdom">Wisdom</option>
+                  <option value="Charisma">Charisma</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="damageType">Damage/Effect Types (comma-separated)</label>
+              <input type="text" id="damageType" placeholder="e.g., fire, radiant, healing">
+              <small>Common: acid, bludgeoning, cold, fire, force, lightning, necrotic, piercing, poison, psychic, radiant, slashing, thunder</small>
+            </div>
+
+            <div class="form-group">
+              <label for="tags">Tags (comma-separated)</label>
+              <input type="text" id="tags" placeholder="e.g., damage, control, utility, healing">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Spell</button>
+            <button type="button" id="cancelBtnBottom" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="spells.js"></script>
+</body>
+</html>
