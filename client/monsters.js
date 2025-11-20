@@ -4,6 +4,12 @@ let currentMonsterId = null;
 let sensesList = [];
 let languagesList = [];
 let skillsList = [];
+let traitsList = [];
+let actionsList = [];
+let bonusActionsList = [];
+let reactionsList = [];
+let legendaryActionsList = [];
+let mythicActionsList = [];
 
 // DOM Elements
 const monsterList = document.getElementById('monsterList');
@@ -105,6 +111,14 @@ document.getElementById('initiativeSave').addEventListener('click', function() {
 document.getElementById('addSkillBtn').addEventListener('click', addSkill);
 document.getElementById('addSenseBtn').addEventListener('click', addSense);
 document.getElementById('addLanguageBtn').addEventListener('click', addLanguage);
+
+// Traits and actions
+document.getElementById('addTraitBtn').addEventListener('click', addTrait);
+document.getElementById('addActionBtn').addEventListener('click', addAction);
+document.getElementById('addBonusActionBtn').addEventListener('click', addBonusAction);
+document.getElementById('addReactionBtn').addEventListener('click', addReaction);
+document.getElementById('addLegendaryActionBtn').addEventListener('click', addLegendaryAction);
+document.getElementById('addMythicActionBtn').addEventListener('click', addMythicAction);
 
 // HP formula calculation
 document.getElementById('hpFormula').addEventListener('input', calculateAverageHP);
@@ -415,6 +429,246 @@ function renderLanguages() {
   `).join('');
 }
 
+// Traits management
+function addTrait() {
+  const title = document.getElementById('traitTitle').value.trim();
+  const content = document.getElementById('traitContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  traitsList.push({ title, content: [content] });
+  renderTraits();
+
+  document.getElementById('traitTitle').value = '';
+  document.getElementById('traitContent').value = '';
+}
+
+function removeTrait(index) {
+  traitsList.splice(index, 1);
+  renderTraits();
+}
+
+function renderTraits() {
+  const container = document.getElementById('traitsList');
+  if (traitsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No traits added</p>';
+    return;
+  }
+
+  container.innerHTML = traitsList.map((trait, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${trait.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeTrait(${index})">×</button>
+      </div>
+      <div class="item-card-content">${trait.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
+// Actions management
+function addAction() {
+  const title = document.getElementById('actionTitle').value.trim();
+  const content = document.getElementById('actionContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  actionsList.push({ title, content: [content] });
+  renderActions();
+
+  document.getElementById('actionTitle').value = '';
+  document.getElementById('actionContent').value = '';
+}
+
+function removeAction(index) {
+  actionsList.splice(index, 1);
+  renderActions();
+}
+
+function renderActions() {
+  const container = document.getElementById('actionsList');
+  if (actionsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No actions added</p>';
+    return;
+  }
+
+  container.innerHTML = actionsList.map((action, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${action.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeAction(${index})">×</button>
+      </div>
+      <div class="item-card-content">${action.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
+// Bonus Actions management
+function addBonusAction() {
+  const title = document.getElementById('bonusActionTitle').value.trim();
+  const content = document.getElementById('bonusActionContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  bonusActionsList.push({ title, content: [content] });
+  renderBonusActions();
+
+  document.getElementById('bonusActionTitle').value = '';
+  document.getElementById('bonusActionContent').value = '';
+}
+
+function removeBonusAction(index) {
+  bonusActionsList.splice(index, 1);
+  renderBonusActions();
+}
+
+function renderBonusActions() {
+  const container = document.getElementById('bonusActionsList');
+  if (bonusActionsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No bonus actions added</p>';
+    return;
+  }
+
+  container.innerHTML = bonusActionsList.map((action, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${action.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeBonusAction(${index})">×</button>
+      </div>
+      <div class="item-card-content">${action.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
+// Reactions management
+function addReaction() {
+  const title = document.getElementById('reactionTitle').value.trim();
+  const content = document.getElementById('reactionContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  reactionsList.push({ title, content: [content] });
+  renderReactions();
+
+  document.getElementById('reactionTitle').value = '';
+  document.getElementById('reactionContent').value = '';
+}
+
+function removeReaction(index) {
+  reactionsList.splice(index, 1);
+  renderReactions();
+}
+
+function renderReactions() {
+  const container = document.getElementById('reactionsList');
+  if (reactionsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No reactions added</p>';
+    return;
+  }
+
+  container.innerHTML = reactionsList.map((reaction, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${reaction.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeReaction(${index})">×</button>
+      </div>
+      <div class="item-card-content">${reaction.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
+// Legendary Actions management
+function addLegendaryAction() {
+  const title = document.getElementById('legendaryActionTitle').value.trim();
+  const content = document.getElementById('legendaryActionContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  legendaryActionsList.push({ title, content: [content] });
+  renderLegendaryActions();
+
+  document.getElementById('legendaryActionTitle').value = '';
+  document.getElementById('legendaryActionContent').value = '';
+}
+
+function removeLegendaryAction(index) {
+  legendaryActionsList.splice(index, 1);
+  renderLegendaryActions();
+}
+
+function renderLegendaryActions() {
+  const container = document.getElementById('legendaryActionsList');
+  if (legendaryActionsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No legendary actions added</p>';
+    return;
+  }
+
+  container.innerHTML = legendaryActionsList.map((action, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${action.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeLegendaryAction(${index})">×</button>
+      </div>
+      <div class="item-card-content">${action.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
+// Mythic Actions management
+function addMythicAction() {
+  const title = document.getElementById('mythicActionTitle').value.trim();
+  const content = document.getElementById('mythicActionContent').value.trim();
+
+  if (!title || !content) {
+    alert('Please enter both title and content');
+    return;
+  }
+
+  mythicActionsList.push({ title, content: [content] });
+  renderMythicActions();
+
+  document.getElementById('mythicActionTitle').value = '';
+  document.getElementById('mythicActionContent').value = '';
+}
+
+function removeMythicAction(index) {
+  mythicActionsList.splice(index, 1);
+  renderMythicActions();
+}
+
+function renderMythicActions() {
+  const container = document.getElementById('mythicActionsList');
+  if (mythicActionsList.length === 0) {
+    container.innerHTML = '<p class="text-muted" style="margin: 0;">No mythic actions added</p>';
+    return;
+  }
+
+  container.innerHTML = mythicActionsList.map((action, index) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-title">${action.title}</div>
+        <button type="button" class="item-card-remove" onclick="removeMythicAction(${index})">×</button>
+      </div>
+      <div class="item-card-content">${action.content.join('\n')}</div>
+    </div>
+  `).join('');
+}
+
 // Load all monsters
 async function loadMonsters() {
   try {
@@ -453,6 +707,12 @@ function showNewMonsterForm() {
   sensesList = [];
   languagesList = [];
   skillsList = [];
+  traitsList = [];
+  actionsList = [];
+  bonusActionsList = [];
+  reactionsList = [];
+  legendaryActionsList = [];
+  mythicActionsList = [];
 
   // Reset save proficiencies
   ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
@@ -465,6 +725,12 @@ function showNewMonsterForm() {
   renderSkills();
   renderSenses();
   renderLanguages();
+  renderTraits();
+  renderActions();
+  renderBonusActions();
+  renderReactions();
+  renderLegendaryActions();
+  renderMythicActions();
   updateAbilitiesAndSkills();
   monsterList.style.display = 'none';
   monsterForm.style.display = 'block';
@@ -478,6 +744,12 @@ function hideForm() {
   sensesList = [];
   languagesList = [];
   skillsList = [];
+  traitsList = [];
+  actionsList = [];
+  bonusActionsList = [];
+  reactionsList = [];
+  legendaryActionsList = [];
+  mythicActionsList = [];
   currentMonsterId = null;
 }
 
@@ -582,6 +854,20 @@ async function editMonster(id) {
     // Languages
     languagesList = monster.languages || [];
     renderLanguages();
+
+    // Traits and actions
+    traitsList = monster.traits || [];
+    renderTraits();
+    actionsList = monster.actions || [];
+    renderActions();
+    bonusActionsList = monster.bonusActions || [];
+    renderBonusActions();
+    reactionsList = monster.reactions || [];
+    renderReactions();
+    legendaryActionsList = monster.legendaryActions || [];
+    renderLegendaryActions();
+    mythicActionsList = monster.mythicActions || [];
+    renderMythicActions();
 
     // Additional details
     document.getElementById('damageResistances').value = monster.damageResistances?.join('; ') || '';
@@ -749,13 +1035,13 @@ async function handleSubmit(e) {
         rating: parseFloat(document.getElementById('cr').value) || null,
         xp: parseInt(document.getElementById('xp').value) || null
       },
-      traits: null,
-      actions: null,
-      bonusActions: null,
-      reactions: null,
-      legendaryActions: null,
+      traits: traitsList.length > 0 ? traitsList : null,
+      actions: actionsList.length > 0 ? actionsList : null,
+      bonusActions: bonusActionsList.length > 0 ? bonusActionsList : null,
+      reactions: reactionsList.length > 0 ? reactionsList : null,
+      legendaryActions: legendaryActionsList.length > 0 ? legendaryActionsList : null,
       legendaryActionsIntro: null,
-      mythicActions: null,
+      mythicActions: mythicActionsList.length > 0 ? mythicActionsList : null,
       lairActions: null,
       meta: {
         url: '',
@@ -796,3 +1082,9 @@ window.duplicateMonster = duplicateMonster;
 window.removeSkill = removeSkill;
 window.removeSense = removeSense;
 window.removeLanguage = removeLanguage;
+window.removeTrait = removeTrait;
+window.removeAction = removeAction;
+window.removeBonusAction = removeBonusAction;
+window.removeReaction = removeReaction;
+window.removeLegendaryAction = removeLegendaryAction;
+window.removeMythicAction = removeMythicAction;

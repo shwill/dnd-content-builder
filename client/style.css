@@ -457,6 +457,62 @@ header p {
   color: var(--primary-dark);
 }
 
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+  padding: 10px;
+  background: var(--background);
+  border-radius: 4px;
+  min-height: 40px;
+}
+
+.item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px;
+  position: relative;
+}
+
+.item-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.item-card-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1em;
+}
+
+.item-card-remove {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1.4em;
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.item-card-remove:hover {
+  color: var(--primary-dark);
+}
+
+.item-card-content {
+  color: var(--text);
+  font-size: 0.9em;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .checkbox-group {
   display: flex;
   gap: 20px;
