@@ -192,7 +192,19 @@ function updateMarkdownPreview(textareaId, previewId) {
 
 function handlePasteWithTitleSplit(event, titleFieldId, contentFieldId) {
   // Get pasted text
-  const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Clean up line breaks from PDFs: preserve paragraph breaks (blank lines) but remove single line breaks
+  // Split by blank lines (one or more empty lines with possible whitespace)
+  const paragraphs = pastedText.split(/(?:\r?\n\s*){2,}/);
+
+  // For each paragraph, replace single newlines with spaces and normalize whitespace
+  const cleanedParagraphs = paragraphs.map(para => {
+    return para.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+  }).filter(para => para.length > 0); // Remove empty paragraphs
+
+  // Join paragraphs back with double newlines
+  pastedText = cleanedParagraphs.join('\n\n');
 
   // Check if the pasted text contains a period
   const firstDotIndex = pastedText.indexOf('.');
