@@ -171,6 +171,11 @@ document.getElementById('legendaryActionsIntro').addEventListener('paste', funct
   handlePasteCleanup(e, 'legendaryActionsIntro');
 });
 
+// Paste listener for name field (convert to title case)
+document.getElementById('name').addEventListener('paste', function(e) {
+  handlePasteTitleCase(e, 'name');
+});
+
 // Helper functions
 function calcModifier(score) {
   if (!score) return 0;
@@ -215,6 +220,25 @@ function handlePasteCleanup(event, fieldId) {
 
   // Clean up line breaks
   pastedText = cleanupLineBreaks(pastedText);
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Set field content
+  const field = document.getElementById(fieldId);
+  field.value = pastedText;
+}
+
+function handlePasteTitleCase(event, fieldId) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Convert to title case (first letter of each word uppercase, rest lowercase)
+  pastedText = pastedText
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 
   // Prevent default paste behavior
   event.preventDefault();

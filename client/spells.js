@@ -36,6 +36,11 @@ document.getElementById('higherLevels').addEventListener('paste', function(e) {
   handlePasteWithFormatting(e, 'higherLevels', 'higherLevelsPreview');
 });
 
+// Paste listener for name field (convert to title case)
+document.getElementById('name').addEventListener('paste', function(e) {
+  handlePasteTitleCase(e, 'name');
+});
+
 // Helper function for markdown preview
 function updateMarkdownPreview(textareaId, previewId) {
   const textarea = document.getElementById(textareaId);
@@ -63,6 +68,25 @@ function cleanupLineBreaks(text) {
 
   // Join paragraphs back with double newlines
   return cleanedParagraphs.join('\n\n');
+}
+
+function handlePasteTitleCase(event, fieldId) {
+  // Get pasted text
+  let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+
+  // Convert to title case (first letter of each word uppercase, rest lowercase)
+  pastedText = pastedText
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  // Prevent default paste behavior
+  event.preventDefault();
+
+  // Set field content
+  const field = document.getElementById(fieldId);
+  field.value = pastedText;
 }
 
 function handlePasteWithFormatting(event, fieldId, previewId) {
