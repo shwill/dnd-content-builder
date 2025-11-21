@@ -784,6 +784,13 @@ function showNewSpellForm() {
   form.reset();
   document.getElementById('descriptionPreview').innerHTML = '';
   document.getElementById('higherLevelsPreview').innerHTML = '';
+
+  // Restore last used source from localStorage
+  const lastSource = localStorage.getItem('lastSource');
+  if (lastSource) {
+    document.getElementById('source').value = lastSource;
+  }
+
   spellList.style.display = 'none';
   spellForm.style.display = 'block';
 }
@@ -935,15 +942,17 @@ async function handleSubmit(e) {
       body: JSON.stringify(spellData)
     });
 
-    // Save the source value before resetting the form
+    // Save the source value to localStorage for future use
     const savedSource = document.getElementById('source').value;
+    if (savedSource) {
+      localStorage.setItem('lastSource', savedSource);
+    }
 
     // Reload the spells list (in background)
     loadSpells();
 
-    // Show a new spell form with the source pre-filled
+    // Show a new spell form (source will be auto-filled from localStorage)
     showNewSpellForm();
-    document.getElementById('source').value = savedSource;
 
     // Scroll to top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });

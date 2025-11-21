@@ -1012,6 +1012,13 @@ function showNewMonsterForm() {
   renderLegendaryActions();
   renderMythicActions();
   updateAbilitiesAndSkills();
+
+  // Restore last used source from localStorage
+  const lastSource = localStorage.getItem('lastSource');
+  if (lastSource) {
+    document.getElementById('source').value = lastSource;
+  }
+
   monsterList.style.display = 'none';
   monsterForm.style.display = 'block';
 }
@@ -1351,15 +1358,17 @@ async function handleSubmit(e) {
       body: JSON.stringify(monsterData)
     });
 
-    // Save the source value before resetting the form
+    // Save the source value to localStorage for future use
     const savedSource = document.getElementById('source').value;
+    if (savedSource) {
+      localStorage.setItem('lastSource', savedSource);
+    }
 
     // Reload the monsters list (in background)
     loadMonsters();
 
-    // Show a new monster form with the source pre-filled
+    // Show a new monster form (source will be auto-filled from localStorage)
     showNewMonsterForm();
-    document.getElementById('source').value = savedSource;
 
     // Scroll to top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });
