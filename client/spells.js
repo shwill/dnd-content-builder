@@ -652,7 +652,8 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
       // Split the text
       const splitIndex = pastedText.indexOf(higherLevelMatch[0]);
       const descriptionPart = pastedText.substring(0, splitIndex).trim();
-      higherLevelsText = higherLevelMatch[0].trim();
+      // higherLevelMatch[2] is the content after the prefix (e.g., after "Using a Higher-Level Spell Slot.")
+      higherLevelsText = higherLevelMatch[2].trim();
 
       // Use only the description part for the main field
       pastedText = descriptionPart;
