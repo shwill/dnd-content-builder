@@ -642,6 +642,23 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
   // Get pasted text
   let pastedText = (event.clipboardData || window.clipboardData).getData('text');
 
+  // For description field, check if it contains "Higher-Level Spell Slot" or "Cantrip Upgrade" sections
+  let higherLevelsText = null;
+  if (fieldId === 'description') {
+    // Look for "Using a Higher-Level Spell Slot." or "Cantrip Upgrade."
+    const higherLevelMatch = pastedText.match(/(Using a Higher-Level Spell Slot\.|Cantrip Upgrade\.)([\s\S]*)/i);
+
+    if (higherLevelMatch) {
+      // Split the text
+      const splitIndex = pastedText.indexOf(higherLevelMatch[0]);
+      const descriptionPart = pastedText.substring(0, splitIndex).trim();
+      higherLevelsText = higherLevelMatch[0].trim();
+
+      // Use only the description part for the main field
+      pastedText = descriptionPart;
+    }
+  }
+
   // Clean up line breaks
   pastedText = cleanupLineBreaks(pastedText);
 
@@ -688,6 +705,29 @@ function handlePasteWithFormatting(event, fieldId, previewId) {
   // Trigger input event to update markdown preview
   if (previewId) {
     field.dispatchEvent(new Event('input'));
+  }
+
+  // If we extracted higher levels text, populate that field too
+  if (higherLevelsText) {
+    const higherLevelsField = document.getElementById('higherLevels');
+    // Clean up line breaks for higher levels text
+    higherLevelsText = cleanupLineBreaks(higherLevelsText);
+    // Apply the same formatting
+    higherLevelsText = higherLevelsText.replace(/\b(Melee or Ranged Attack Roll):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Melee Attack Roll):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Ranged Attack Roll):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Strength Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Dexterity Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Constitution Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Intelligence Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Wisdom Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Charisma Saving Throw):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Hit):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Failure):/g, '_$1:_');
+    higherLevelsText = higherLevelsText.replace(/\b(Success):/g, '_$1:_');
+
+    higherLevelsField.value = higherLevelsText;
+    higherLevelsField.dispatchEvent(new Event('input'));
   }
 }
 
