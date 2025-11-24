@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# User-generated content
+data/monsters/*.json
+data/spells/*.json
+
+# Keep directory structure but not content
+!data/monsters/.gitkeep
+!data/spells/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*

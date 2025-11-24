@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monster Builder - D&D Content Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div>
+          <h1>Monster Builder</h1>
+          <a href="index.html" class="breadcrumb">← Back to Home</a>
+        </div>
+        <button id="newMonsterBtn" class="btn btn-primary">+ New Monster</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Monster List -->
+      <div id="monsterList" class="content-list"></div>
+
+      <!-- Monster Form (hidden by default) -->
+      <div id="monsterForm" class="form-panel" style="display: none;">
+        <div class="form-header">
+          <h2 id="formTitle">New Monster</h2>
+          <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+
+        <form id="monster-form">
+          <input type="hidden" id="monsterId">
+
+          <div class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input type="text" id="name" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="size">Size</label>
+                <select id="size">
+                  <option value="">Select size</option>
+                  <option value="Tiny">Tiny</option>
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                  <option value="Huge">Huge</option>
+                  <option value="Gargantuan">Gargantuan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="type">Type</label>
+                <select id="type">
+                  <option value="">Select type</option>
+                  <option value="Aberration">Aberration</option>
+                  <option value="Beast">Beast</option>
+                  <option value="Celestial">Celestial</option>
+                  <option value="Construct">Construct</option>
+                  <option value="Dragon">Dragon</option>
+                  <option value="Elemental">Elemental</option>
+                  <option value="Fey">Fey</option>
+                  <option value="Fiend">Fiend</option>
+                  <option value="Giant">Giant</option>
+                  <option value="Humanoid">Humanoid</option>
+                  <option value="Monstrosity">Monstrosity</option>
+                  <option value="Ooze">Ooze</option>
+                  <option value="Plant">Plant</option>
+                  <option value="Undead">Undead</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="subType">Subtype</label>
+                <input type="text" id="subType" placeholder="e.g., Goblinoid, Elf">
+              </div>
+
+              <div class="form-group">
+                <label for="alignment">Alignment</label>
+                <select id="alignment">
+                  <option value="">Select alignment</option>
+                  <option value="Lawful Good">Lawful Good</option>
+                  <option value="Neutral Good">Neutral Good</option>
+                  <option value="Chaotic Good">Chaotic Good</option>
+                  <option value="Lawful Neutral">Lawful Neutral</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Chaotic Neutral">Chaotic Neutral</option>
+                  <option value="Lawful Evil">Lawful Evil</option>
+                  <option value="Neutral Evil">Neutral Evil</option>
+                  <option value="Chaotic Evil">Chaotic Evil</option>
+                  <option value="Unaligned">Unaligned</option>
+                  <option value="Any">Any Alignment</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="source">Source</label>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <input type="text" id="source" placeholder="e.g., Monster Manual, Volo's Guide to Monsters" style="flex: 1;">
+                <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('source').value='SRD 5.1'">SRD 5.1</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('source').value='SRD 5.2.1'">SRD 5.2.1</button>
+              </div>
+              <small>The book or source where this monster appears</small>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Combat Stats</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ac">Armor Class</label>
+                <input type="number" id="ac" min="1">
+              </div>
+              <div class="form-group">
+                <label for="armorType">Armor Type</label>
+                <input type="text" id="armorType" placeholder="e.g., natural armor">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="hpFormula">HP Formula</label>
+                <input type="text" id="hpFormula" placeholder="e.g., 8d8+16">
+              </div>
+              <div class="form-group">
+                <label for="hp">Hit Points (average)</label>
+                <input type="number" id="hp" min="1" placeholder="Auto-calculated">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Speed (feet)</label>
+              <div class="speed-grid">
+                <div class="form-group">
+                  <label for="speedWalk">Walk</label>
+                  <input type="number" id="speedWalk" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedFly">Fly</label>
+                  <input type="number" id="speedFly" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedSwim">Swim</label>
+                  <input type="number" id="speedSwim" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedBurrow">Burrow</label>
+                  <input type="number" id="speedBurrow" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label for="speedClimb">Climb</label>
+                  <input type="number" id="speedClimb" min="0" step="5">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cr">Challenge Rating</label>
+                <input type="number" id="cr" step="0.125" min="0" placeholder="e.g., 0.5, 1, 2">
+              </div>
+              <div class="form-group">
+                <label for="xp">XP (auto-calculated)</label>
+                <input type="number" id="xp" min="0" placeholder="Auto-calculated">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Ability Scores &amp; Saves</h3>
+            <div class="form-group mb-20">
+              <label for="profBonus">Proficiency Bonus</label>
+              <input type="number" id="profBonus" min="0" value="2" style="width: 100px;">
+            </div>
+
+            <div class="form-group mb-20">
+              <label>Initiative (based on DEX)</label>
+              <div class="ability-save" id="initiativeSave" data-prof="none" title="Click to toggle proficiency" style="display: inline-flex; cursor: pointer; padding: 8px 16px; border-radius: 4px;">
+                <span class="save-label" style="margin-right: 8px;">INITIATIVE:</span>
+                <span id="initiativeDisplay" class="save-value" style="font-size: 1.1em;">+0</span>
+              </div>
+              <p class="help-text">Click to toggle: None → Proficient → Expert</p>
+            </div>
+
+            <div class="ability-sheet-grid">
+              <div class="ability-block">
+                <div class="ability-name">Str</div>
+                <div class="ability-score">
+                  <input type="number" id="str" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="strMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="strSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="strSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Dex</div>
+                <div class="ability-score">
+                  <input type="number" id="dex" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="dexMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="dexSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="dexSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Con</div>
+                <div class="ability-score">
+                  <input type="number" id="con" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="conMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="conSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="conSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Int</div>
+                <div class="ability-score">
+                  <input type="number" id="int" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="intMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="intSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="intSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Wis</div>
+                <div class="ability-score">
+                  <input type="number" id="wis" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="wisMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="wisSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="wisSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+
+              <div class="ability-block">
+                <div class="ability-name">Cha</div>
+                <div class="ability-score">
+                  <input type="number" id="cha" min="1" max="30" placeholder="10">
+                </div>
+                <div class="ability-mod">
+                  <span class="mod-label">MOD</span>
+                  <span id="chaMod" class="mod-value">+0</span>
+                </div>
+                <div class="ability-save" id="chaSave" data-prof="none" title="Click to toggle proficiency">
+                  <span class="save-label">SAVE</span>
+                  <span id="chaSaveDisplay" class="save-value">+0</span>
+                </div>
+              </div>
+            </div>
+            <p class="help-text">Click on SAVE to toggle: None → Proficient → Expert</p>
+          </div>
+
+          <div class="form-section">
+            <h3>Skills</h3>
+            <div class="skill-builder">
+              <div class="builder-row">
+                <div class="form-group">
+                  <label for="skillSelect">Skill</label>
+                  <select id="skillSelect">
+                    <option value="">Select skill</option>
+                    <option value="acrobatics">Acrobatics (DEX)</option>
+                    <option value="animalHandling">Animal Handling (WIS)</option>
+                    <option value="arcana">Arcana (INT)</option>
+                    <option value="athletics">Athletics (STR)</option>
+                    <option value="deception">Deception (CHA)</option>
+                    <option value="history">History (INT)</option>
+                    <option value="insight">Insight (WIS)</option>
+                    <option value="intimidation">Intimidation (CHA)</option>
+                    <option value="investigation">Investigation (INT)</option>
+                    <option value="medicine">Medicine (WIS)</option>
+                    <option value="nature">Nature (INT)</option>
+                    <option value="perception">Perception (WIS)</option>
+                    <option value="performance">Performance (CHA)</option>
+                    <option value="persuasion">Persuasion (CHA)</option>
+                    <option value="religion">Religion (INT)</option>
+                    <option value="sleightOfHand">Sleight of Hand (DEX)</option>
+                    <option value="stealth">Stealth (DEX)</option>
+                    <option value="survival">Survival (WIS)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="skillProfSelect">Proficiency</label>
+                  <select id="skillProfSelect">
+                    <option value="proficient">Proficient</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                </div>
+                <button type="button" id="addSkillBtn" class="btn btn-success builder-btn">Add</button>
+              </div>
+            </div>
+            <div id="skillsList" class="tags-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Senses</h3>
+            <div class="sense-builder">
+              <div class="builder-row">
+                <div class="form-group">
+                  <label for="senseType">Type</label>
+                  <select id="senseType">
+                    <option value="">Select type</option>
+                    <option value="blindsight">Blindsight</option>
+                    <option value="darkvision">Darkvision</option>
+                    <option value="tremorsense">Tremorsense</option>
+                    <option value="truesight">Truesight</option>
+                    <option value="passive Perception">Passive Perception</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="senseRange">Range/Value</label>
+                  <input type="number" id="senseRange" placeholder="e.g., 60">
+                </div>
+                <div class="form-group">
+                  <label for="senseQualifier">Qualifier (optional)</label>
+                  <input type="text" id="senseQualifier" placeholder="e.g., blind beyond">
+                </div>
+                <button type="button" id="addSenseBtn" class="btn btn-success builder-btn">Add</button>
+              </div>
+            </div>
+            <div id="sensesList" class="tags-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Languages</h3>
+            <div class="language-builder">
+              <div class="builder-row">
+                <div class="form-group">
+                  <label for="languageSelect">Language</label>
+                  <select id="languageSelect">
+                    <option value="">Select language</option>
+                    <option value="Aarakocra">Aarakocra</option>
+                    <option value="Abyssal">Abyssal</option>
+                    <option value="Aquan">Aquan</option>
+                    <option value="Auran">Auran</option>
+                    <option value="Celestial">Celestial</option>
+                    <option value="Common">Common</option>
+                    <option value="Deep Speech">Deep Speech</option>
+                    <option value="Draconic">Draconic</option>
+                    <option value="Druidic">Druidic</option>
+                    <option value="Dwarvish">Dwarvish</option>
+                    <option value="Elvish">Elvish</option>
+                    <option value="Giant">Giant</option>
+                    <option value="Gith">Gith</option>
+                    <option value="Gnomish">Gnomish</option>
+                    <option value="Goblin">Goblin</option>
+                    <option value="Halfling">Halfling</option>
+                    <option value="Ignan">Ignan</option>
+                    <option value="Infernal">Infernal</option>
+                    <option value="Kraul">Kraul</option>
+                    <option value="Merfolk">Merfolk</option>
+                    <option value="Orc">Orc</option>
+                    <option value="Primordial">Primordial</option>
+                    <option value="Sphinx">Sphinx</option>
+                    <option value="Sylvan">Sylvan</option>
+                    <option value="Terran">Terran</option>
+                    <option value="Thieves' cant">Thieves' cant</option>
+                    <option value="Undercommon">Undercommon</option>
+                    <option value="Telepathy">Telepathy</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="languageQualifier">Qualifier (optional)</label>
+                  <select id="languageQualifier">
+                    <option value="">None</option>
+                    <option value="understands but can't speak">understands but can't speak</option>
+                    <option value="can't speak">can't speak</option>
+                    <option value="doesn't speak">doesn't speak</option>
+                    <option value="can't speak in bear form">can't speak in bear form</option>
+                    <option value="can't speak in bat form">can't speak in bat form</option>
+                    <option value="can't speak in wolf form">can't speak in wolf form</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="telepathyRange">Telepathy Range</label>
+                  <select id="telepathyRange">
+                    <option value="">N/A</option>
+                    <option value="5">5 ft.</option>
+                    <option value="20">20 ft.</option>
+                    <option value="30">30 ft.</option>
+                    <option value="50">50 ft.</option>
+                    <option value="60">60 ft.</option>
+                    <option value="100">100 ft.</option>
+                    <option value="120">120 ft.</option>
+                    <option value="150">150 ft.</option>
+                    <option value="240">240 ft.</option>
+                    <option value="300">300 ft.</option>
+                    <option value="600">600 ft.</option>
+                    <option value="1000">1000 ft.</option>
+                  </select>
+                </div>
+                <button type="button" id="addLanguageBtn" class="btn btn-success builder-btn">Add</button>
+              </div>
+            </div>
+            <div id="languagesList" class="tags-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Additional Details</h3>
+
+            <div class="form-group">
+              <label for="damageResistances">Damage Resistances (semicolon-separated)</label>
+              <input type="text" id="damageResistances" placeholder="e.g., fire; cold">
+            </div>
+
+            <div class="form-group">
+              <label for="damageImmunities">Damage Immunities (semicolon-separated)</label>
+              <input type="text" id="damageImmunities" placeholder="e.g., poison; psychic">
+            </div>
+
+            <div class="form-group">
+              <label for="damageVulnerabilities">Damage Vulnerabilities (semicolon-separated)</label>
+              <input type="text" id="damageVulnerabilities" placeholder="e.g., fire; radiant">
+            </div>
+
+            <div class="form-group">
+              <label for="conditionImmunities">Condition Immunities (semicolon-separated)</label>
+              <input type="text" id="conditionImmunities" placeholder="e.g., charmed; frightened">
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Traits</h3>
+            <div class="trait-builder">
+              <div class="form-group">
+                <label for="traitTitle">Title</label>
+                <input type="text" id="traitTitle" placeholder="e.g., Pack Tactics">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="traitContent">Content (markdown)</label>
+                  <textarea id="traitContent" rows="5" placeholder="Enter trait description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="traitPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addTraitBtn" class="btn btn-success">Add Trait</button>
+            </div>
+            <div id="traitsList" class="items-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Actions</h3>
+            <div class="action-builder">
+              <div class="form-group">
+                <label for="actionTitle">Title</label>
+                <input type="text" id="actionTitle" placeholder="e.g., Multiattack">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="actionContent">Content (markdown)</label>
+                  <textarea id="actionContent" rows="5" placeholder="Enter action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="actionPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addActionBtn" class="btn btn-success">Add Action</button>
+            </div>
+            <div id="actionsList" class="items-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Bonus Actions</h3>
+            <div class="bonusaction-builder">
+              <div class="form-group">
+                <label for="bonusActionTitle">Title</label>
+                <input type="text" id="bonusActionTitle" placeholder="e.g., Cunning Action">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="bonusActionContent">Content (markdown)</label>
+                  <textarea id="bonusActionContent" rows="5" placeholder="Enter bonus action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="bonusActionPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addBonusActionBtn" class="btn btn-success">Add Bonus Action</button>
+            </div>
+            <div id="bonusActionsList" class="items-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Reactions</h3>
+            <div class="reaction-builder">
+              <div class="form-group">
+                <label for="reactionTitle">Title</label>
+                <input type="text" id="reactionTitle" placeholder="e.g., Parry">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="reactionContent">Content (markdown)</label>
+                  <textarea id="reactionContent" rows="5" placeholder="Enter reaction description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="reactionPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addReactionBtn" class="btn btn-success">Add Reaction</button>
+            </div>
+            <div id="reactionsList" class="items-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Legendary Actions</h3>
+            <div class="form-group">
+              <label for="legendaryActionsIntro">Intro Text (optional)</label>
+              <textarea id="legendaryActionsIntro" rows="2" placeholder="e.g., The aboleth can take 3 legendary actions, choosing from the options below..."></textarea>
+              <small>Descriptive text that appears before the list of legendary actions</small>
+            </div>
+            <div class="legendaryaction-builder">
+              <div class="form-group">
+                <label for="legendaryActionTitle">Title</label>
+                <input type="text" id="legendaryActionTitle" placeholder="e.g., Detect">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="legendaryActionContent">Content (markdown)</label>
+                  <textarea id="legendaryActionContent" rows="5" placeholder="Enter legendary action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="legendaryActionPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addLegendaryActionBtn" class="btn btn-success">Add Legendary Action</button>
+            </div>
+            <div id="legendaryActionsList" class="items-list"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Mythic Actions</h3>
+            <div class="mythicaction-builder">
+              <div class="form-group">
+                <label for="mythicActionTitle">Title</label>
+                <input type="text" id="mythicActionTitle" placeholder="e.g., Divine Smite">
+              </div>
+              <div class="markdown-editor">
+                <div class="markdown-input">
+                  <label for="mythicActionContent">Content (markdown)</label>
+                  <textarea id="mythicActionContent" rows="5" placeholder="Enter mythic action description..."></textarea>
+                </div>
+                <div class="markdown-preview">
+                  <label>Preview</label>
+                  <div id="mythicActionPreview" class="preview-content"></div>
+                </div>
+              </div>
+              <button type="button" id="addMythicActionBtn" class="btn btn-success">Add Mythic Action</button>
+            </div>
+            <div id="mythicActionsList" class="items-list"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Monster</button>
+            <button type="button" id="cancelBtnBottom" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="monsters.js"></script>
+</body>
+</html>
